@@ -1,6 +1,24 @@
 <resources>
     <string name="app_name">Labyrinth Speedtest</string>
 
-    <string name="hello_world">Hello world!</string>
+    <string name="selectplayer">Player settings</string>
+    <string name="username">Username:</string>
+    <string name="country">Country:</string>
+    <string name="save">Save</string>
+    <string name="saved">Saved</string>
     <string name="action_settings">Settings</string>
+    <string name="action_about">About</string>
+    <string name="info_actionbar">Labyrinth Speedtest - About</string>
+    <string name="info_copyright">Copyright &#169; Arde Apps</string>
+    <string name="info_data_title">Data transfer</string>
+    <string name="info_version">Version:</string>
+    <string name="info_usage_title">Usage</string>
+    <string name="info_link_rate">Rate the app</string>
+    <string name="info_link_more">More apps</string>
+    <string name="info_feedback_title">Feedback</string>
+    <string name="info_feedback_content">Rate the app and at the same time give feedback about app\'s functionality and suggest new features.</string>
+    <string name="info_title_content">Read tens of comics conveniently with your mobile phone.</string>
+    <string name="info_data_content">The app loads data from internet. Developer is not responsible of possible data transfer costs.</string>
+    <string name="info_usage_content">You can choose comics\' language from dropdown list. Add comics to favourites list by pressing heart or remove favourite pressing cross. Choose comic to read by pressing it. Save bookmark by pressing star and return to it via history button.</string>
+    <string name="slow_connection">Slow connection. Try again!</string>
 </resources>
