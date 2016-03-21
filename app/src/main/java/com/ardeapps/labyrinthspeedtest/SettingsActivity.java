@@ -56,8 +56,6 @@ public class SettingsActivity extends Activity {
         editor.putString("username", usernameText.getText().toString());
         editor.apply();
 
-        Intent myIntent = new Intent(this, MainActivity.class);
-        this.startActivity(myIntent);
         finish();
     }
 }

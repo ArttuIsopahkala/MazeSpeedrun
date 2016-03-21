@@ -13,7 +13,7 @@ import java.util.ArrayList;
 public class Database extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "ls_database";
     public final String TABLE_MAZES = "mazes";
-    public final String MAZE_NRO = "maze_nro";
+    public final String MAZE_NAME = "maze_name";
     public final String PLAYER_NAME = "player_name";
     public final String TIME = "time";
 
@@ -25,10 +25,7 @@ public class Database extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         // create a new table
-        db.execSQL("CREATE TABLE " + TABLE_MAZES + " (_id INTEGER PRIMARY KEY AUTOINCREMENT, " + MAZE_NRO + " TEXT, " + PLAYER_NAME + " TEXT, " + TIME + " TEXT);");
-
-        MazeData mazeData = new MazeData();
-        ArrayList<MazeData.Maze> mazes = mazeData.getMazeData();
+        db.execSQL("CREATE TABLE " + TABLE_MAZES + " (_id INTEGER PRIMARY KEY AUTOINCREMENT, " + MAZE_NAME + " TEXT, " + PLAYER_NAME + " TEXT, " + TIME + " TEXT);");
     }
 
     @Override

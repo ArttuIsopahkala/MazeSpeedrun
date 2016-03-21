@@ -19,7 +19,8 @@
         <activity
             android:name=".MazeActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Black.NoTitleBar" >
         </activity>
         <activity
             android:name=".SettingsActivity"
