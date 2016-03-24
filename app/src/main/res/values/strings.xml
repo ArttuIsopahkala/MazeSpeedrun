@@ -15,6 +15,8 @@
     <string name="hard">Hard</string>
     <string name="position">Position</string>
     <string name="time">Time</string>
+    <string name="personal_best_times">Personal best times</string>
+    <string name="all_time_best_times">All time best times</string>
     <string name="info_actionbar">Labyrinth Speedtest - About</string>
     <string name="info_copyright">Copyright &#169; Arde Apps</string>
     <string name="info_data_title">Data transfer</string>

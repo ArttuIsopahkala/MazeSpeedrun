@@ -3,12 +3,20 @@
     android:layout_height="match_parent"
     android:background="#FFCC7F"
     tools:context="com.ardeapps.labyrinthspeedtest.HighscoreActivity">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/personal"
+        android:text="@string/personal_best_times"
+        android:gravity="center"
+        android:textSize="20sp" />
     <LinearLayout
         android:id="@+id/personal_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#FFF3C9"
         android:layout_marginEnd="10dp"
+        android:layout_below="@+id/personal"
         android:layout_marginStart="10dp">
         <TextView
             android:id="@+id/position"
@@ -16,6 +24,8 @@
             android:layout_weight="0.33"
             android:layout_height="wrap_content"
             android:text="@string/position"
+            android:gravity="center"
+            android:textStyle="bold"
             android:textSize="20sp" />
         <TextView
             android:id="@+id/personal_result"
@@ -23,14 +33,57 @@
             android:layout_weight="0.33"
             android:layout_height="wrap_content"
             android:text="@string/time"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textSize="20sp" />
+    </LinearLayout>
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/personal_title"
+        android:id="@+id/listview_personal"
+        android:divider="@null"
+        android:dividerHeight="0dp" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/alltime"
+        android:text="@string/all_time_best_times"
+        android:gravity="center"
+        android:layout_below="@+id/listview_personal"
+        android:textSize="20sp" />
+    <LinearLayout
+        android:id="@+id/alltime_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFF3C9"
+        android:layout_marginEnd="10dp"
+        android:layout_below="@+id/alltime"
+        android:layout_marginStart="10dp">
+        <TextView
+            android:id="@+id/alltime_position"
+            android:layout_width="0dp"
+            android:layout_weight="0.33"
+            android:layout_height="wrap_content"
+            android:text="@string/position"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textSize="20sp" />
+        <TextView
+            android:id="@+id/alltime_result"
+            android:layout_width="0dp"
+            android:layout_weight="0.33"
+            android:layout_height="wrap_content"
+            android:text="@string/time"
+            android:gravity="center"
+            android:textStyle="bold"
             android:textSize="20sp" />
     </LinearLayout>
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/personal_title"
-        android:id="@+id/listview_personal"
+        android:layout_below="@+id/alltime_title"
+        android:id="@+id/listview_alltime"
         android:divider="@null"
         android:dividerHeight="0dp" />
-
 </RelativeLayout>

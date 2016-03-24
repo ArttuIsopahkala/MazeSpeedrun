@@ -27,16 +27,16 @@ public class HighscoreActivity extends Activity {
     public final String MAZE_NAME = "maze_name";
     public final String TIME = "time";
     String[] resultColumns = new String[]{"_id", MAZE_NAME, TIME};
-    ListView listview_personal;
+    ListView listview_personal, listview_alltime;
     String name;
     ArrayList<Float> times = new ArrayList<>();
-    ArrayAdapter<Float> Values;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_highscore);
         listview_personal = (ListView) findViewById(R.id.listview_personal);
+        listview_alltime = (ListView) findViewById(R.id.listview_alltime);
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -62,21 +62,13 @@ public class HighscoreActivity extends Activity {
             }
         };
         Collections.sort(times, byFirstElement);
-        for(Float time : times){
-            Log.e("Cursor Object", time + "");
-        }
+
         if(times.size()>5) {
             times.subList(5, times.size()).clear();
         }
-        Values=new ArrayAdapter<Float>(HighscoreActivity.this, R.layout.hs_list_item, R.id.personal_result, times);
-
-        /*SimpleCursorAdapter adapterPersonal = new SimpleCursorAdapter(this,
-                R.layout.hs_list_item, cursor,
-                new String[]{TIME},      // from
-                new int[]{R.id.personal_result}    // to
-                , 0);
-*/
-        listview_personal.setAdapter(Values);
+        ArrayAdapter<Float> adapter = new HighscoreAdapter(this, times);
+        listview_personal.setAdapter(adapter);
+        listview_alltime.setAdapter(adapter);
     }
 
 }
