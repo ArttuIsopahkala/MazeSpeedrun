@@ -83,8 +83,6 @@ public class MazeAdapter extends BaseAdapter {
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
-                Toast.makeText(context, "You Clicked " + result_name.get(position), Toast.LENGTH_LONG).show();
                 Intent mazeIntent = new Intent(context, MazeActivity.class);
                 Bundle mBundle = new Bundle();
                 mBundle.putString("name", result_name.get(position));

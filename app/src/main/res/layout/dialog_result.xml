@@ -1,33 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="150dp"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="@drawable/curve_shape">
+    android:background="@drawable/curve_shape"
+    android:paddingStart="20dp"
+    android:paddingEnd="20dp"
+    android:paddingTop="20dp"
+    android:paddingBottom="20dp">
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="map"
         android:id="@+id/map_name"
+        android:textColor="#000000"
         android:textSize="20sp"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="your time"
+        android:textColor="#000000"
         android:id="@+id/time"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="your time"
+        android:textColor="#000000"
         android:id="@+id/time_best"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="your position on week"
+        android:textColor="#000000"
         android:id="@+id/position"/>
     <LinearLayout
         android:layout_width="match_parent"

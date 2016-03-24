@@ -14,7 +14,7 @@
         android:layout_gravity="end"
         android:textSize="30sp"
         android:textColor="#CCCCFF"
-        android:text="00.00"
+        android:text="@string/default_zero"
         />
 
 </FrameLayout>

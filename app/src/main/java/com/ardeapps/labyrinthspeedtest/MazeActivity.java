@@ -2,6 +2,8 @@ package com.ardeapps.labyrinthspeedtest;
 
 import android.app.Activity;
 import android.content.ContentValues;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -32,6 +34,14 @@ import android.widget.TextView;
  */
 public class MazeActivity extends Activity {
 
+    //Database
+    public SQLiteDatabase db;
+    public Cursor cursor;
+    public final String TABLE_MAZES = "mazes";
+    public final String MAZE_NAME = "maze_name";
+    public final String TIME = "time";
+    String[] resultColumns = new String[]{"_id", MAZE_NAME, TIME};
+
     private int width;
     private int height;
     GridLayout mazeLayout;
@@ -55,11 +65,11 @@ public class MazeActivity extends Activity {
         @Override
         public void run() {
             long millis = System.currentTimeMillis() - startTime;
-            int hundredth = (int) (millis / 10);
-            int seconds = hundredth / 100;
-            hundredth = hundredth % 100;
-            clockText.setText(String.format("%02d.%02d", seconds, hundredth));
-            timerHandler.postDelayed(this, 10);
+            int thousandth = (int) (millis);
+            int seconds = thousandth / 1000;
+            thousandth = thousandth % 1000;
+            clockText.setText(String.format("%01d.%03d", seconds, thousandth));
+            timerHandler.postDelayed(this, 1);
         }
     };
 
@@ -76,6 +86,9 @@ public class MazeActivity extends Activity {
             name = extras.getString("name");
             maze = (int[][]) extras.getSerializable("map");
         }
+
+        // get database instance
+        db = (new Database(this)).getWritableDatabase();
 
         xTilesCount = maze[0].length;
         yTilesCount = maze.length;
@@ -101,16 +114,12 @@ public class MazeActivity extends Activity {
                 display.getSize(size);
                 int screen_height = size.y;
                 notification_bar_height = screen_height-height;
-                Log.e("Cursor Object", width + "*5 height");
-                Log.e("Cursor Object", screen_height + "*5 height");
                 Bitmap imageBitmapWall = BitmapFactory.decodeResource(getResources(), getResources().getIdentifier("wall", "drawable", getPackageName()));
                 Bitmap wall = Bitmap.createScaledBitmap(imageBitmapWall, imageWidth, imageHeight, false);
                 Bitmap imageBitmapFloor = BitmapFactory.decodeResource(getResources(), getResources().getIdentifier("floor", "drawable", getPackageName()));
                 Bitmap floor = Bitmap.createScaledBitmap(imageBitmapFloor, imageWidth, imageHeight, false);
                 Bitmap imageBitmapGoal = BitmapFactory.decodeResource(getResources(), getResources().getIdentifier("cup", "drawable", getPackageName()));
                 Bitmap goal = Bitmap.createScaledBitmap(imageBitmapGoal, imageWidth, imageHeight, false);
-                Log.e("Cursor Object", imageHeight + " height");
-                Log.e("Cursor Object", imageWidth + " width");
                 for (int i = 0, c = 0, r = 0; i < xTilesCount * yTilesCount; i++, c++) {
                     if (c == xTilesCount) {
                         c = 0;
@@ -139,12 +148,8 @@ public class MazeActivity extends Activity {
                 }
             }
         });
-
-
-
     }
 
-    private String TAG = MazeActivity.class.getSimpleName();
     float initialX, initialY;
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -170,62 +175,54 @@ public class MazeActivity extends Activity {
                 break;
 
             case MotionEvent.ACTION_MOVE:
-                CustomResultDialog cdd;
-
                 switch (whatViewIsIt(event.getRawX(), event.getRawY())){
                     case 0:
-                        //stop timer
-                        if(gameStarted) {
-                            timerHandler.removeCallbacks(timerRunnable);
-                            cdd = new CustomResultDialog(MazeActivity.this, name, "00.00");
-                            cdd.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                            cdd.show();
-                            cdd.setCancelable(false);
-                            cdd.setCanceledOnTouchOutside(false);
-                            gameStarted = false;
-                        }
+                        //wall
+                        gameFinishedRight(false);
                         break;
                     case 1:
                         //path
                         Log.d("Cursor Object", "PATH");
                         // TODO: 21.3.2016 maybe some path?
                         break;
-                    case 2:
-                        //start
-                        break;
                     case 3:
                         //finish, stop timer
-                        if(gameStarted) {
-                            timerHandler.removeCallbacks(timerRunnable);
-                            String finalTime = clockText.getText().toString();
-                            cdd = new CustomResultDialog(MazeActivity.this, name, finalTime);
-                            cdd.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                            cdd.show();
-                            cdd.setCancelable(false);
-                            cdd.setCanceledOnTouchOutside(false);
-                            gameStarted = false;
-                        }
-                        break;
-                    default:
+                        gameFinishedRight(true);
                         break;
                 }
                 break;
 
             case MotionEvent.ACTION_UP:
-                if(gameStarted) {
-                    timerHandler.removeCallbacks(timerRunnable);
-                    cdd = new CustomResultDialog(MazeActivity.this, name, "00.00");
-                    cdd.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                    cdd.show();
-                    cdd.setCancelable(false);
-                    cdd.setCanceledOnTouchOutside(false);
-                    gameStarted = false;
-                }
-
+                gameFinishedRight(false);
                 break;
         }
 
         return super.onTouchEvent(event);
+    }
+    public void gameFinishedRight(boolean finishedRight){
+        CustomResultDialog cdd;
+        if(gameStarted) {
+            timerHandler.removeCallbacks(timerRunnable);
+            if(finishedRight){
+                //player reach finish tile
+                String finalTime = clockText.getText().toString();
+                //updatePersonalHighscores(finalTime);
+                ContentValues cv = new ContentValues();
+                cv.put(MAZE_NAME, name);
+                cv.put(TIME, finalTime);
+                db.insert(TABLE_MAZES, null, cv);
+                cdd = new CustomResultDialog(MazeActivity.this, name, finalTime);
+            } else {
+                //player hit wall or release finger
+                cdd = new CustomResultDialog(MazeActivity.this, name, getString(R.string.default_zero));
+            }
+            gameStarted = false;
+            clockText.setText(R.string.default_zero);
+            cdd.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            cdd.show();
+            /*cdd.setCancelable(false);
+            cdd.setCanceledOnTouchOutside(false);*/
+        }
     }
 
     public int whatViewIsIt(float x, float y) {
@@ -235,6 +232,7 @@ public class MazeActivity extends Activity {
                 r++;
             }
             int imgtype = maze[r][c];
+            //check what kind of tile finger touch
             if (x > (c - 1) * imageWidth &&
                     x < imageWidth * xTilesCount - ((xTilesCount - c) * imageWidth) &&
                     y > notification_bar_height + r * imageHeight &&
@@ -245,4 +243,17 @@ public class MazeActivity extends Activity {
         return 4;
     }
 
+    public void updatePersonalHighscores(String time){
+        cursor = db.query(TABLE_MAZES, resultColumns, MAZE_NAME+"=?", new String[] {name}, null, null, null, null);
+        Log.e("Cursor Object", cursor.getCount() + " colmuns");
+        if(cursor.getCount() <= 5){
+            ContentValues cv = new ContentValues();
+            cv.put(MAZE_NAME, name);
+            cv.put(TIME, time);
+            db.insert(TABLE_MAZES, null, cv);
+        } else {
+
+        }
+
+    }
 }

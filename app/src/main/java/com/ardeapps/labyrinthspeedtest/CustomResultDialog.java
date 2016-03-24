@@ -2,6 +2,7 @@ package com.ardeapps.labyrinthspeedtest;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
@@ -43,7 +44,7 @@ public class CustomResultDialog extends Dialog implements
         again.setOnClickListener(this);
 
         nameText.setText(map_name);
-        timeText.setText(time);
+        timeText.setText(time+" "+c.getString(R.string.seconds));
         bestTimeText.setText("asd");
 
     }
@@ -52,7 +53,9 @@ public class CustomResultDialog extends Dialog implements
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_highscores:
-                c.finish();
+                Intent myIntent = new Intent(c, HighscoreActivity.class);
+                myIntent.putExtra("name", map_name);
+                c.startActivity(myIntent);
                 break;
             case R.id.btn_again:
                 dismiss();
@@ -60,7 +63,5 @@ public class CustomResultDialog extends Dialog implements
             default:
                 break;
         }
-        TextView clockText = (TextView) c.findViewById(R.id.clockText);
-        clockText.setText("00.00");
     }
 }

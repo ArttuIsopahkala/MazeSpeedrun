@@ -1,0 +1,36 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFCC7F"
+    tools:context="com.ardeapps.labyrinthspeedtest.HighscoreActivity">
+    <LinearLayout
+        android:id="@+id/personal_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFF3C9"
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="10dp">
+        <TextView
+            android:id="@+id/position"
+            android:layout_width="0dp"
+            android:layout_weight="0.33"
+            android:layout_height="wrap_content"
+            android:text="@string/position"
+            android:textSize="20sp" />
+        <TextView
+            android:id="@+id/personal_result"
+            android:layout_width="0dp"
+            android:layout_weight="0.33"
+            android:layout_height="wrap_content"
+            android:text="@string/time"
+            android:textSize="20sp" />
+    </LinearLayout>
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/personal_title"
+        android:id="@+id/listview_personal"
+        android:divider="@null"
+        android:dividerHeight="0dp" />
+
+</RelativeLayout>
