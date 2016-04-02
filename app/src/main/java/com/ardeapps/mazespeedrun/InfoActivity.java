@@ -1,4 +1,4 @@
-package com.ardeapps.labyrinthspeedtest;
+package com.ardeapps.mazespeedrun;
 
 import android.app.Activity;
 import android.os.Bundle;

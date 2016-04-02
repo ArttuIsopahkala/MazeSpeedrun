@@ -1,4 +1,4 @@
-package com.ardeapps.labyrinthspeedtest;
+package com.ardeapps.mazespeedrun;
 
 import java.util.ArrayList;
 

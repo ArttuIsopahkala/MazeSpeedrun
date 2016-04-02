@@ -1,9 +1,10 @@
-package com.ardeapps.labyrinthspeedtest;
+package com.ardeapps.mazespeedrun;
 
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 public class CustomResultDialog extends Dialog implements
         android.view.View.OnClickListener {
 
+    public static final String SWITCH_TO_HIGHSCORE = "com.ardeapps.mazespeedrun.SWITCH_TO_HIGHSCORE";
     public Activity c;
     public Dialog d;
     public Button highscores, again;
@@ -53,9 +55,11 @@ public class CustomResultDialog extends Dialog implements
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_highscores:
-                Intent myIntent = new Intent(c, HighscoreActivity.class);
-                myIntent.putExtra("name", map_name);
-                c.startActivity(myIntent);
+                Bundle mBundle = new Bundle();
+                mBundle.putString("name", map_name);
+                Intent hsIntent = new Intent(SWITCH_TO_HIGHSCORE);
+                hsIntent.putExtras(mBundle);
+                c.sendBroadcast(hsIntent);
                 break;
             case R.id.btn_again:
                 dismiss();

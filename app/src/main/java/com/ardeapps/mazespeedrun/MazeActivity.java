@@ -1,4 +1,4 @@
-package com.ardeapps.labyrinthspeedtest;
+package com.ardeapps.mazespeedrun;
 
 import android.app.Activity;
 import android.content.ContentValues;
@@ -6,27 +6,16 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Point;
-import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
-import android.view.Gravity;
 import android.view.MotionEvent;
-import android.view.Surface;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
-import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.GridLayout;
-import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.TabWidget;
 import android.widget.TextView;
 
 /**
@@ -56,6 +45,7 @@ public class MazeActivity extends Activity {
     int notification_bar_height;
 
     boolean gameStarted = false;
+    String finalTime = "0.000";
 
     //timer
     long startTime = 0;
@@ -205,12 +195,8 @@ public class MazeActivity extends Activity {
             timerHandler.removeCallbacks(timerRunnable);
             if(finishedRight){
                 //player reach finish tile
-                String finalTime = clockText.getText().toString();
-                //updatePersonalHighscores(finalTime);
-                ContentValues cv = new ContentValues();
-                cv.put(MAZE_NAME, name);
-                cv.put(TIME, finalTime);
-                db.insert(TABLE_MAZES, null, cv);
+                finalTime = clockText.getText().toString();
+                updateHighscores();
                 cdd = new CustomResultDialog(MazeActivity.this, name, finalTime);
             } else {
                 //player hit wall or release finger
@@ -220,8 +206,6 @@ public class MazeActivity extends Activity {
             clockText.setText(R.string.default_zero);
             cdd.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             cdd.show();
-            /*cdd.setCancelable(false);
-            cdd.setCanceledOnTouchOutside(false);*/
         }
     }
 
@@ -232,7 +216,7 @@ public class MazeActivity extends Activity {
                 r++;
             }
             int imgtype = maze[r][c];
-            //check what kind of tile finger touch
+            //check what kind of tile finger touches
             if (x > (c - 1) * imageWidth &&
                     x < imageWidth * xTilesCount - ((xTilesCount - c) * imageWidth) &&
                     y > notification_bar_height + r * imageHeight &&
@@ -243,13 +227,15 @@ public class MazeActivity extends Activity {
         return 4;
     }
 
-    public void updatePersonalHighscores(String time){
+    public void updateHighscores(){
+
+        //Update local highscores
         cursor = db.query(TABLE_MAZES, resultColumns, MAZE_NAME+"=?", new String[] {name}, null, null, null, null);
         Log.e("Cursor Object", cursor.getCount() + " colmuns");
         if(cursor.getCount() <= 5){
             ContentValues cv = new ContentValues();
             cv.put(MAZE_NAME, name);
-            cv.put(TIME, time);
+            cv.put(TIME, finalTime);
             db.insert(TABLE_MAZES, null, cv);
         } else {
 

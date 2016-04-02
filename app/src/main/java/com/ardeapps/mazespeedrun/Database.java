@@ -1,4 +1,4 @@
-package com.ardeapps.labyrinthspeedtest;
+package com.ardeapps.mazespeedrun;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
