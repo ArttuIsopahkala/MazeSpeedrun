@@ -88,23 +88,22 @@ public class MazeAdapter extends BaseAdapter{
         holder.difficulty_tv.setText(result_difficulty.get(position));
         holder.your_best_tv.setText(result_time.get(position));
         //holder.img.setImageResource(imageId[position]);
+        final Bundle mBundle = new Bundle();
+        mBundle.putString("name", result_name.get(position));
+        mBundle.putSerializable("map", result_map.get(position));
+
+        //send broadcast to mainActivity to open highscores or maze
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Bundle mBundle = new Bundle();
-                mBundle.putString("name", result_name.get(position));
-                mBundle.putSerializable("map", result_map.get(position));
-                Intent mazeIntent = new Intent(context, MazeActivity.class);
-                mazeIntent.putExtras(mBundle);
-                context.startActivity(mazeIntent);
+                Intent hsIntent = new Intent(SWITCH_TO_MAZE);
+                hsIntent.putExtras(mBundle);
+                context.sendBroadcast(hsIntent);
 
             }
         });
         holder.stats_btn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Bundle mBundle = new Bundle();
-                mBundle.putString("name", result_name.get(position));
-                mBundle.putSerializable("map", result_map.get(position));
                 Intent hsIntent = new Intent(SWITCH_TO_HIGHSCORE);
                 hsIntent.putExtras(mBundle);
                 context.sendBroadcast(hsIntent);

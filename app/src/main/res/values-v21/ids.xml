@@ -7,4 +7,8 @@ Save this file as res/values/games-ids.xml in your project.
     <string name="app_id">462682182118</string>
     <string name="package_name">com.ardeapps.mazespeedrun</string>
     <string name="leaderboard_map_1">CgkI5qOH0LsNEAIQAQ</string>
+    <string name="leaderboard_map_2">CgkI5qOH0LsNEAIQAg</string>
+    <string name="leaderboard_map_3">CgkI5qOH0LsNEAIQAw</string>
+    <string name="leaderboard_map_4">CgkI5qOH0LsNEAIQBA</string>
+    <string name="leaderboard_map_5">CgkI5qOH0LsNEAIQBQ</string>
 </resources>

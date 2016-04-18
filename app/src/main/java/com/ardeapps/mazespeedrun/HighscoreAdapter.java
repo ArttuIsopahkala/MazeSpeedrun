@@ -8,39 +8,51 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 /**
  * Created by Arttu on 24.3.2016.
  */
 public class HighscoreAdapter extends ArrayAdapter<Float> {
     ArrayList<Float> times;
+    private static LayoutInflater inflater = null;
 
     public HighscoreAdapter(Context context, ArrayList<Float> data) {
         super(context, R.layout.hs_list_item, data);
-        this.times = data;
+        times = data;
+        inflater = (LayoutInflater) context.
+                getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
-    // View lookup cache
-    private static class ViewHolder {
+
+    @Override
+    public int getCount() {
+        // TODO Auto-generated method stub
+        return times.size();
+    }
+
+    @Override
+    public long getItemId(int position) {
+        // TODO Auto-generated method stub
+        return position;
+    }
+    public class ViewHolder {
         TextView position;
         TextView personal_result;
     }
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         // Check if an existing view is being reused, otherwise inflate the view
-        ViewHolder viewHolder; // view lookup cache stored in tag
+        final ViewHolder viewHolder;
         if (convertView == null) {
-            viewHolder = new ViewHolder();
-            LayoutInflater inflater = LayoutInflater.from(getContext());
             convertView = inflater.inflate(R.layout.hs_list_item, parent, false);
-            viewHolder.position = (TextView) convertView.findViewById(R.id.position);
-            viewHolder.personal_result = (TextView) convertView.findViewById(R.id.personal_result);
-            convertView.setTag(viewHolder);
-        } else {
-            viewHolder = (ViewHolder) convertView.getTag();
         }
+        viewHolder = new ViewHolder();
+        viewHolder.position = (TextView) convertView.findViewById(R.id.position);
+        viewHolder.personal_result = (TextView) convertView.findViewById(R.id.personal_result);
         // Populate the data into the template view using the data object
         viewHolder.position.setText((position+1)+".");
-        viewHolder.personal_result.setText(times.get(position)+"");
+        String timeString = String.format(Locale.ENGLISH,"%.2f", times.get(position));
+        viewHolder.personal_result.setText(timeString);
         // Return the completed view to render on screen
         return convertView;
     }

@@ -5,15 +5,17 @@
     <string name="username">Username:</string>
     <string name="country">Country:</string>
     <string name="save">Save</string>
+    <string name="greeting">Hello</string>
     <string name="saved">Saved</string>
-    <string name="action_settings">Settings</string>
     <string name="action_about">About</string>
-    <string name="default_zero">0.000</string>
+    <string name="action_leaderboards">Leaderboards</string>
+    <string name="action_logout">Log out</string>
+    <string name="action_login">Log in</string>
+    <string name="default_zero">0.00</string>
     <string name="seconds">seconds</string>
     <string name="easy">Easy</string>
     <string name="medium">Medium</string>
     <string name="hard">Hard</string>
-    <string name="position">Position</string>
     <string name="time">Time</string>
     <string name="personal_best_times">Personal best times</string>
     <string name="all_time_best_times">All time best times</string>
@@ -31,11 +33,19 @@
     <string name="info_usage_content">You can choose comics\' language from dropdown list. Add comics to favourites list by pressing heart or remove favourite pressing cross. Choose comic to read by pressing it. Save bookmark by pressing star and return to it via history button.</string>
     <string name="slow_connection">Slow connection. Try again!</string>
     <string name="title_activity_highscore">HighscoreActivity</string>
+    <string name="no_results_yet">No results yet!</string>
 
-    <string name="default_greeting">Hello, anonymous user (not signed in)!!</string>
+    <string name="hs_your_best">Your best</string>
+    <string name="hs_position">Position</string>
+    <string name="hs_global_best">Global best</string>
+    <string name="hs_today">Today</string>
+    <string name="hs_thisweek">This week</string>
+    <string name="hs_alltime">All time</string>
+
+    <string name="default_greeting">Sign in to share your results world-wide!</string>
     <string name="see_your_progress">See your progress:</string>
     <string name="show_achievements">Show Achievements</string>
-    <string name="show_leaderboards">Show Leaderboards</string>
+    <string name="show_leaderboards">Show precise stats</string>
     <string name="sign_in_why">Sign in with Google to share your scores and achievements with your friends.</string>
     <string name="you_are_signed_in">You are signed in with Google.</string>
     <string name="sign_out">Sign out</string>
@@ -46,6 +56,4 @@
     <string name="leaderboards_not_available">Please sign in to view leaderboards.</string>
     <string name="your_progress_will_be_uploaded">Your existing achievements and score will be uploaded shortly.</string>
 
-<!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -22,16 +22,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Map 1"
+                android:textColor="#808080"
                 android:textSize="20sp" />
             <TextView
                 android:id="@+id/maze_difficulty"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="#808080"
                 android:text="Your record: 1.23s" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Week's best: 1.01s"
+                android:textColor="#808080"
                 android:id="@+id/your_best" />
             <Button
                 style="?android:attr/buttonStyleSmall"

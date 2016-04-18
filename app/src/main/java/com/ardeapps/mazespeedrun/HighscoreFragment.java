@@ -1,9 +1,11 @@
 package com.ardeapps.mazespeedrun;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,23 +44,19 @@ public class HighscoreFragment extends Fragment implements View.OnClickListener 
 
     //signing stuff
     String mGreeting;
-    SignInButton sign_in_button;
-    Button sign_out_button;
 
     public interface Listener {
-        public void onStartGameRequested(boolean hardMode);
-        public void onShowLeaderboardsRequested();
+        public void onShowLeaderboardsRequested(String name);
         public void onSignInButtonClicked();
         public void onSignOutButtonClicked();
     }
 
     Listener mListener = null;
-    boolean mShowSignIn = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Log.d("HighscoreFragment", "onCreate()");
         name = getArguments().getString("name");
 
         // get database instance
@@ -81,23 +79,20 @@ public class HighscoreFragment extends Fragment implements View.OnClickListener 
         };
         Collections.sort(times, byFirstElement);
 
-        if(times.size()>5) {
-            times.subList(5, times.size()).clear();
-        }
         adapter = new HighscoreAdapter(getActivity(), times);
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_highscore, container, false);
-        final int[] CLICKABLES = new int[] {
-                R.id.sign_in_button, R.id.sign_out_button
-        };
-        for (int i : CLICKABLES) {
-            v.findViewById(i).setOnClickListener(this);
-        }
+        Button ldButton = (Button) v.findViewById(R.id.show_leaderboards_button);
+        ldButton.setOnClickListener(this);
+
+        View emptyView = v.findViewById(R.id.empty_view);
 
         listview_personal = (ListView) v.findViewById(R.id.listview_personal);
+        listview_personal.setEmptyView(emptyView);
         listview_personal.setAdapter(adapter);
 
         return v;
@@ -110,39 +105,26 @@ public class HighscoreFragment extends Fragment implements View.OnClickListener 
     @Override
     public void onStart() {
         super.onStart();
-        updateUi();
+        if(getActivity().getActionBar() != null){
+            getActivity().getActionBar().show();
+        }
     }
 
-    public void setGreeting(String greeting) {
-        mGreeting = greeting;
-        updateUi();
-    }
-
-    void updateUi() {
-        if (getActivity() == null) return;
-        TextView greetingTv = (TextView) getActivity().findViewById(R.id.hello);
-        if (greetingTv != null) greetingTv.setText(mGreeting);
-
-        getActivity().findViewById(R.id.sign_in_bar).setVisibility(mShowSignIn ?
-                View.VISIBLE : View.GONE);
-        getActivity().findViewById(R.id.sign_out_bar).setVisibility(mShowSignIn ?
-                View.GONE : View.VISIBLE);
+    @Override
+    public void onStop() {
+        super.onStop();
+        //clear adapter to empty listview
+        if(!adapter.isEmpty()){
+            adapter.clear();
+        }
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.sign_in_button:
-                mListener.onSignInButtonClicked();
-                break;
-            case R.id.sign_out_button:
-                mListener.onSignOutButtonClicked();
+            case R.id.show_leaderboards_button:
+                mListener.onShowLeaderboardsRequested(name);
                 break;
         }
-    }
-
-    public void setShowSignInButton(boolean showSignIn) {
-        mShowSignIn = showSignIn;
-        updateUi();
     }
 }

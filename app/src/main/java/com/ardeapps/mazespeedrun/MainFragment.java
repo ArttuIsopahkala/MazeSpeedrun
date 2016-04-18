@@ -16,10 +16,12 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.SignInButton;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 
 /**
@@ -30,7 +32,7 @@ import java.util.ArrayList;
  * Use the {@link MainFragment# newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MainFragment extends Fragment implements View.OnClickListener {
+public class MainFragment extends Fragment {
     //Database
     public SQLiteDatabase db;
     public Cursor cursor;
@@ -43,7 +45,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     MazeAdapter adapter;
 
     MazeData mazeData = new MazeData();
-    ArrayList<MazeData.Maze> mazes = mazeData.getMazeData();
+    ArrayList<MazeData.Maze> mazes;
     ArrayList<String> maze_names = new ArrayList<>();
     ArrayList<String> maze_difficulties = new ArrayList<>();
     ArrayList<int[][]> maze_maps = new ArrayList<>();
@@ -52,33 +54,31 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
     //signing stuff
     String mGreeting;
-    SignInButton sign_in_button;
-    Button sign_out_button;
 
     public interface Listener {
-        public void onStartGameRequested(boolean hardMode);
-        public void onShowLeaderboardsRequested();
         public void onSignInButtonClicked();
         public void onSignOutButtonClicked();
     }
 
     Listener mListener = null;
-    boolean mShowSignIn = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = getActivity().getApplicationContext();
 
-        sign_in_button = (SignInButton) getActivity().findViewById(R.id.sign_in_button);
-        sign_out_button = (Button) getActivity().findViewById(R.id.sign_out_button);
-        /*sign_in_button.setOnClickListener(this);
-        sign_out_button.setOnClickListener(this);*/
-
         mGreeting = getString(R.string.default_greeting);
 
         // get database instance
         db = (new Database(getActivity())).getReadableDatabase();
+
+    }
+
+    /** Get MazeData for mainFragment items */
+    public void updateMazeData(){
+        mazes = mazeData.getMazeData();
+        // load local times from database and update
+        mazeData.loadLocal(db);
 
         for(MazeData.Maze maze : mazes){
             maze_names.add(maze.maze_name);
@@ -94,45 +94,37 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                     maze_difficulties.add(getString(R.string.hard));
                     break;
             }
-            cursor = db.query(TABLE_MAZES, resultColumns, MAZE_NAME+"=?", new String[] {maze.maze_name}, null, null, null, null);
-            Float bestTime;
-            Float nextTime;
-            if(cursor.getCount()!=0) {
-                cursor.moveToFirst();
-                bestTime = Float.parseFloat(cursor.getString(cursor.getColumnIndex(TIME)));
-                do {
-                    nextTime = Float.parseFloat(cursor.getString(cursor.getColumnIndex(TIME)));
-                    if(nextTime < bestTime){
-                        bestTime = nextTime;
-                    }
-                } while (cursor.moveToNext());
-                times.add(bestTime+"");
-            } else times.add(getString(R.string.default_zero));
 
+            if(maze.mapTime > 0){
+                Float time = (float)maze.mapTime/1000;
+                String timeString = String.format(Locale.ENGLISH,"%.2f", time);
+                times.add(timeString);
+                Log.d("tanc", timeString);
+            } else times.add(getString(R.string.default_zero));
         }
 
         adapter = new MazeAdapter(context, maze_names, maze_difficulties, maze_maps, times);
-
+        Log.d("tanc", "mazedata updated");
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onPause() {
+        super.onPause();
         //empty mazes arraylist
         mazes.clear();
-        //Toast.makeText(this, "ondestroy ", Toast.LENGTH_LONG).show();
+        maze_names.clear();
+        maze_difficulties.clear();
+        maze_maps.clear();
+        times.clear();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        updateMazeData();
+
         View v = inflater.inflate(R.layout.fragment_main, container, false);
-        final int[] CLICKABLES = new int[] {
-                R.id.sign_in_button, R.id.sign_out_button
-        };
-        for (int i : CLICKABLES) {
-            v.findViewById(i).setOnClickListener(this);
-        }
+
         listView = (ListView) v.findViewById(R.id.listView);
         listView.setAdapter(adapter);
         return v;
@@ -146,6 +138,9 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     public void onStart() {
         super.onStart();
         updateUi();
+        if(getActivity().getActionBar() != null){
+            getActivity().getActionBar().show();
+        }
     }
 
     public void setGreeting(String greeting) {
@@ -157,27 +152,6 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         if (getActivity() == null) return;
         TextView greetingTv = (TextView) getActivity().findViewById(R.id.hello);
         if (greetingTv != null) greetingTv.setText(mGreeting);
-
-        getActivity().findViewById(R.id.sign_in_bar).setVisibility(mShowSignIn ?
-                View.VISIBLE : View.GONE);
-        getActivity().findViewById(R.id.sign_out_bar).setVisibility(mShowSignIn ?
-                View.GONE : View.VISIBLE);
     }
 
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.sign_in_button:
-                mListener.onSignInButtonClicked();
-                break;
-            case R.id.sign_out_button:
-                mListener.onSignOutButtonClicked();
-                break;
-        }
-    }
-
-    public void setShowSignInButton(boolean showSignIn) {
-        mShowSignIn = showSignIn;
-        updateUi();
-    }
 }
