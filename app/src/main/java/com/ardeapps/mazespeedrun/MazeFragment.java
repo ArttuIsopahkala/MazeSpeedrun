@@ -139,11 +139,6 @@ public class MazeFragment extends Fragment {
                 display.getSize(size);
                 int screen_height = size.y;
                 int screen_width = size.x;
-                /*Log.e("Cursor Object", screen_width + "*5 height!!");
-                Log.e("Cursor Object", screen_height + "*5 height!!");
-                Log.e("Cursor Object", maze_width + "*5 height!");
-                Log.e("Cursor Object", maze_height + "*5 height!");
-                Log.e("Cursor Object", notification_area_height + "*5 noti_bar_height!!");*/
 
                 notification_area_height = screen_height - maze_height - actionbar_height;
 

@@ -9,13 +9,13 @@
         android:layout_height="wrap_content"
         android:id="@+id/map_title"
         android:textStyle="italic|bold"
-        android:text="@string/all_time_best_times"
+        android:text="@string/map_title_default"
         android:gravity="center"
-        android:textSize="22sp" />
+        android:textSize="24sp" />
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/personal"
+        android:layout_marginTop="5dp"
         android:text="@string/personal_best_times"
         android:gravity="center"
         android:textSize="20sp" />
@@ -56,12 +56,20 @@
         android:visibility="gone"/>
     <ListView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:id="@+id/listview_personal"
         android:divider="@null"
         android:dividerHeight="0dp" />
-
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/hs_global_title"
+        android:layout_marginTop="10dp"
+        android:text="@string/hs_global_title"
+        android:gravity="center"
+        android:textSize="20sp" />
     <LinearLayout
+        android:id="@+id/hs_title_ll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#FFF3C9"
@@ -99,14 +107,130 @@
             android:textStyle="bold"
             android:textSize="18sp" />
     </LinearLayout>
-    <ListView
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/listview_alltime"
-        android:divider="@null"
-        android:dividerHeight="0dp" />
-    <Button android:layout_width="wrap_content"
+        android:id="@+id/hs_today_ll"
+        android:background="#FFF3C9"
+        android:layout_marginTop="1dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="10dp">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="0.2"
+            android:layout_height="wrap_content"
+            android:text="@string/hs_today"
+            android:gravity="center"
+            android:textSize="16sp" />
+        <TextView
+            android:id="@+id/your_best_today"
+            android:layout_width="0dp"
+            android:layout_weight="0.25"
+            android:layout_height="wrap_content"
+            android:text="@string/default_zero"
+            android:gravity="center"
+            android:textSize="18sp" />
+        <TextView
+            android:id="@+id/position_today"
+            android:layout_width="0dp"
+            android:layout_weight="0.25"
+            android:layout_height="wrap_content"
+            android:text="@string/default_zero"
+            android:gravity="center"
+            android:textSize="18sp" />
+        <TextView
+            android:id="@+id/global_best_today"
+            android:layout_width="0dp"
+            android:layout_weight="0.25"
+            android:layout_height="wrap_content"
+            android:text="@string/default_zero"
+            android:gravity="center"
+            android:textSize="18sp" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/hs_thisweek_ll"
+        android:background="#FFF3C9"
+        android:layout_marginTop="1dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="10dp">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="0.2"
+            android:layout_height="wrap_content"
+            android:text="@string/hs_thisweek"
+            android:gravity="center"
+            android:textSize="16sp" />
+        <TextView
+            android:id="@+id/your_best_thisweek"
+            android:layout_width="0dp"
+            android:layout_weight="0.25"
+            android:layout_height="wrap_content"
+            android:text="@string/default_zero"
+            android:gravity="center"
+            android:textSize="18sp" />
+        <TextView
+            android:id="@+id/position_thisweek"
+            android:layout_width="0dp"
+            android:layout_weight="0.25"
+            android:layout_height="wrap_content"
+            android:text="@string/default_zero"
+            android:gravity="center"
+            android:textSize="18sp" />
+        <TextView
+            android:id="@+id/global_best_thisweek"
+            android:layout_width="0dp"
+            android:layout_weight="0.25"
+            android:layout_height="wrap_content"
+            android:text="@string/default_zero"
+            android:gravity="center"
+            android:textSize="18sp" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/hs_alltime_ll"
+        android:background="#FFF3C9"
+        android:layout_marginTop="1dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="10dp">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="0.2"
+            android:layout_height="wrap_content"
+            android:text="@string/hs_alltime"
+            android:gravity="center"
+            android:textSize="16sp" />
+        <TextView
+            android:id="@+id/your_best_alltime"
+            android:layout_width="0dp"
+            android:layout_weight="0.25"
+            android:layout_height="wrap_content"
+            android:text="@string/default_zero"
+            android:gravity="center"
+            android:textSize="18sp" />
+        <TextView
+            android:id="@+id/position_alltime"
+            android:layout_width="0dp"
+            android:layout_weight="0.25"
+            android:layout_height="wrap_content"
+            android:text="@string/default_zero"
+            android:gravity="center"
+            android:textSize="18sp" />
+        <TextView
+            android:id="@+id/global_best_alltime"
+            android:layout_width="0dp"
+            android:layout_weight="0.25"
+            android:layout_height="wrap_content"
+            android:text="@string/default_zero"
+            android:gravity="center"
+            android:textSize="18sp" />
+    </LinearLayout>
+    <Button android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
         android:text="@string/show_leaderboards"
         android:id="@+id/show_leaderboards_button" />
 

@@ -34,7 +34,8 @@
     <string name="slow_connection">Slow connection. Try again!</string>
     <string name="title_activity_highscore">HighscoreActivity</string>
     <string name="no_results_yet">No results yet!</string>
-
+    <string name="hs_global_title">Global highscores</string>
+    <string name="hs_global_title_default">Sign in to see global highscores!</string>
     <string name="hs_your_best">Your best</string>
     <string name="hs_position">Position</string>
     <string name="hs_global_best">Global best</string>
@@ -42,10 +43,13 @@
     <string name="hs_thisweek">This week</string>
     <string name="hs_alltime">All time</string>
 
+    <string name="loading_title">Loading</string>
+    <string name="loading_desc">Looking for global highscores..</string>
+    <string name="map_title_default">Map</string>
     <string name="default_greeting">Sign in to share your results world-wide!</string>
     <string name="see_your_progress">See your progress:</string>
     <string name="show_achievements">Show Achievements</string>
-    <string name="show_leaderboards">Show precise stats</string>
+    <string name="show_leaderboards">Show full leaderboard</string>
     <string name="sign_in_why">Sign in with Google to share your scores and achievements with your friends.</string>
     <string name="you_are_signed_in">You are signed in with Google.</string>
     <string name="sign_out">Sign out</string>

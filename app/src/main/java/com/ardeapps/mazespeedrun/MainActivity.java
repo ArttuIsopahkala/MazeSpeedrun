@@ -1,6 +1,7 @@
 package com.ardeapps.mazespeedrun;
 
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -10,12 +11,14 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -30,6 +33,12 @@ import com.google.android.gms.games.leaderboard.LeaderboardScore;
 import com.google.android.gms.games.leaderboard.LeaderboardVariant;
 import com.google.android.gms.games.leaderboard.Leaderboards;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -86,14 +95,19 @@ public class MainActivity extends FragmentActivity implements
     Uri urlimageInCloud;
     long positionInCloud;
 
-    /** BROADCASTRECIEVER FROM MazeAdapter for onclick events in map list*/
+    /** BROADCASTRECIEVER FROM MazeAdapter for onclick events in map list or from customResultDialog*/
     BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Bundle bundle = intent.getExtras();
+            final Bundle bundle = intent.getExtras();
             switch(intent.getAction()){
                 case MazeAdapter.SWITCH_TO_HIGHSCORE:
+                    int leaderboardId = mazeData.getMapId(bundle.getString("name"));
                     highscoreFragment.setArguments(bundle);
+                    //get global highscores if signed in
+                    if(isSignedIn()){
+                        getGlobalHighscores(leaderboardId);
+                    }
                     switchToFragment(highscoreFragment);
                     break;
                 case MazeAdapter.SWITCH_TO_MAZE:
@@ -103,6 +117,87 @@ public class MainActivity extends FragmentActivity implements
             }
         }
     };
+
+    public void getGlobalHighscores(int leaderboardId){
+        final ProgressDialog progress = new ProgressDialog(this);
+        progress.setTitle(getString(R.string.loading_title));
+        progress.setMessage(getString(R.string.loading_desc));
+        progress.setCancelable(false);
+        progress.show();
+
+        Games.Leaderboards.loadCurrentPlayerLeaderboardScore(mGoogleApiClient, getString(leaderboardId), LeaderboardVariant.TIME_SPAN_DAILY,
+                LeaderboardVariant.COLLECTION_PUBLIC).setResultCallback(new ResultCallback<Leaderboards.LoadPlayerScoreResult>() {
+            public void onResult(Leaderboards.LoadPlayerScoreResult arg0) {
+                if (isPlayerScoreResultValid(arg0)) {
+                    LeaderboardScore lbs = arg0.getScore();
+                    long time = lbs.getRawScore();
+                    long pos = lbs.getRank();
+                    highscoreFragment.setTodayPlayerScores(time, pos);
+                }
+            }
+        });
+        Games.Leaderboards.loadCurrentPlayerLeaderboardScore(mGoogleApiClient, getString(leaderboardId), LeaderboardVariant.TIME_SPAN_WEEKLY,
+                LeaderboardVariant.COLLECTION_PUBLIC).setResultCallback(new ResultCallback<Leaderboards.LoadPlayerScoreResult>() {
+            public void onResult(Leaderboards.LoadPlayerScoreResult arg0) {
+                if (isPlayerScoreResultValid(arg0)) {
+                    LeaderboardScore lbs = arg0.getScore();
+                    long time = lbs.getRawScore();
+                    long pos = lbs.getRank();
+                    highscoreFragment.setThisWeekPlayerScores(time, pos);
+                }
+            }
+        });
+        Games.Leaderboards.loadCurrentPlayerLeaderboardScore(mGoogleApiClient, getString(leaderboardId), LeaderboardVariant.TIME_SPAN_ALL_TIME,
+                LeaderboardVariant.COLLECTION_PUBLIC).setResultCallback(new ResultCallback<Leaderboards.LoadPlayerScoreResult>() {
+            public void onResult(Leaderboards.LoadPlayerScoreResult arg0) {
+                if (isPlayerScoreResultValid(arg0)) {
+                    LeaderboardScore lbs = arg0.getScore();
+                    long time = lbs.getRawScore();
+                    long pos = lbs.getRank();
+                    highscoreFragment.setAllTimePlayerScores(time, pos);
+                }
+            }
+        });
+        Games.Leaderboards.loadTopScores(mGoogleApiClient, getString(leaderboardId),
+                LeaderboardVariant.TIME_SPAN_DAILY,
+                LeaderboardVariant.COLLECTION_PUBLIC, 1).setResultCallback(new ResultCallback<Leaderboards.LoadScoresResult>() {
+
+            public void onResult(Leaderboards.LoadScoresResult arg0) {
+                if (isScoreResultValid(arg0)) {
+                    LeaderboardScore lbs = arg0.getScores().get(0);
+                    long time = lbs.getRawScore();
+                    highscoreFragment.setTodayTopScore(time);
+                }
+            }
+        });
+        Games.Leaderboards.loadTopScores(mGoogleApiClient, getString(leaderboardId),
+                LeaderboardVariant.TIME_SPAN_WEEKLY,
+                LeaderboardVariant.COLLECTION_PUBLIC, 1).setResultCallback(new ResultCallback<Leaderboards.LoadScoresResult>() {
+
+            public void onResult(Leaderboards.LoadScoresResult arg0) {
+                if (isScoreResultValid(arg0)) {
+                    LeaderboardScore lbs = arg0.getScores().get(0);
+                    long time = lbs.getRawScore();
+                    highscoreFragment.setThisWeekTopScore(time);
+                }
+            }
+        });
+        Games.Leaderboards.loadTopScores(mGoogleApiClient, getString(leaderboardId),
+                LeaderboardVariant.TIME_SPAN_ALL_TIME,
+                LeaderboardVariant.COLLECTION_PUBLIC, 1).setResultCallback(new ResultCallback<Leaderboards.LoadScoresResult>() {
+
+            public void onResult(Leaderboards.LoadScoresResult arg0) {
+                if (isScoreResultValid(arg0)) {
+                    LeaderboardScore lbs = arg0.getScores().get(0);
+                    long time = lbs.getRawScore();
+                    highscoreFragment.setAllTimeTopScore(time);
+                }
+
+                // To dismiss the dialog
+                progress.dismiss();
+            }
+        });
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -289,54 +384,12 @@ public class MainActivity extends FragmentActivity implements
         });
     }
 
-    public void getHighscoresFromCloud(){
-        Games.Leaderboards.loadTopScores(mGoogleApiClient, getString(R.string.leaderboard_map_1),
-                LeaderboardVariant.TIME_SPAN_ALL_TIME,
-                LeaderboardVariant.COLLECTION_PUBLIC, 5).setResultCallback(new ResultCallback<Leaderboards.LoadScoresResult>() {
-
-            public void onResult(Leaderboards.LoadScoresResult arg0) {
-                int size = arg0.getScores().getCount();
-                if (size <= 5) {
-                    for (int i = 0; i < size; i++) {
-                        if (isScoreResultValid(arg0)) {
-                            LeaderboardScore lbs = arg0.getScores().get(i);
-                            String name = lbs.getScoreHolderDisplayName();
-                            String score = lbs.getDisplayScore();
-                            Uri urlimage = lbs.getScoreHolderHiResImageUri();
-
-                            Log.d(TAG, size + " size");
-                            Log.d(TAG, name + " name");
-                            Log.d(TAG, score + " score");
-                            Log.d(TAG, urlimage + " image");
-                            Log.d(TAG, lbs.getDisplayRank() + " displayrank");
-                        }
-                    }
-                } else {
-                    for (int i = 0; i < 5; i++) {
-                        if (isScoreResultValid(arg0)) {
-                            LeaderboardScore lbs = arg0.getScores().get(i);
-                            String name = lbs.getScoreHolderDisplayName();
-                            String score = lbs.getDisplayScore();
-                            Uri urlimage = lbs.getScoreHolderHiResImageUri();
-
-                            Log.d(TAG, size + " size");
-                            Log.d(TAG, name + " name");
-                            Log.d(TAG, score + " score");
-                            Log.d(TAG, urlimage + " image");
-                        }
-                    }
-                }
-                //arg0.getScores().close();
-            }
-        });
-    }
-
     private boolean isPlayerScoreResultValid(final Leaderboards.LoadPlayerScoreResult scoreResult) {
         return scoreResult != null && GamesStatusCodes.STATUS_OK == scoreResult.getStatus().getStatusCode() && scoreResult.getScore() != null;
     }
 
     private boolean isScoreResultValid(final Leaderboards.LoadScoresResult scoreResult) {
-        return scoreResult != null && GamesStatusCodes.STATUS_OK == scoreResult.getStatus().getStatusCode() && scoreResult.getScores() != null;
+        return scoreResult != null && GamesStatusCodes.STATUS_OK == scoreResult.getStatus().getStatusCode() && scoreResult.getScores() != null && scoreResult.getScores().getCount() > 0;
     }
 
     @Override
@@ -370,7 +423,13 @@ public class MainActivity extends FragmentActivity implements
             displayName = p.getDisplayName();
         }
         mainFragment.setGreeting(getString(R.string.greeting) + ", " + displayName + "!");
+        highscoreFragment.showGlobalScores(true);
 
+        //if log in is pressed in highscoreFragment
+        if(highscoreFragment.isVisible()){
+            String mapName = highscoreFragment.getName();
+            getGlobalHighscores(mazeData.getMapId(mapName));
+        }
         // if we have accomplishments to push, push them
         //pushToCloud();
     }
@@ -400,6 +459,7 @@ public class MainActivity extends FragmentActivity implements
         }
         // Sign-in failed, so show sign-in button on main activity
         mainFragment.setGreeting(getString(R.string.default_greeting));
+        highscoreFragment.showGlobalScores(false);
     }
 
     @Override
@@ -418,8 +478,8 @@ public class MainActivity extends FragmentActivity implements
             mMenuSet = 1;
             invalidateOptionsMenu();
         }
-
         mainFragment.setGreeting(getString(R.string.default_greeting));
+        highscoreFragment.showGlobalScores(false);
     }
 
 }

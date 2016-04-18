@@ -43,6 +43,7 @@ public class HighscoreAdapter extends ArrayAdapter<Float> {
     public View getView(final int position, View convertView, ViewGroup parent) {
         // Check if an existing view is being reused, otherwise inflate the view
         final ViewHolder viewHolder;
+
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.hs_list_item, parent, false);
         }
