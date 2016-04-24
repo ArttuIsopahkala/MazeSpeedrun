@@ -22,6 +22,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -64,6 +65,8 @@ public class MazeFragment extends Fragment {
     int notification_area_height;
     Bitmap wall, floor, goal;
     ActionBar actionBar;
+    ImageView target;
+    boolean targetVisible = false;
 
     boolean gameStarted = false;
     Float finalTime = 0.0f;
@@ -119,6 +122,8 @@ public class MazeFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_maze, container, false);
         mazeLayout = (GridLayout) v.findViewById(R.id.mazeLayout);
         clockText = (TextView) v.findViewById(R.id.clockText);
+        target = (ImageView) v.findViewById(R.id.target);
+        target.setVisibility(View.INVISIBLE);
 
         xTilesCount = maze[0].length;
         yTilesCount = maze.length;
@@ -201,6 +206,8 @@ public class MazeFragment extends Fragment {
                             startTime = System.currentTimeMillis();
                             timerHandler.postDelayed(timerRunnable, 0);
                             gameStarted = true;
+                            target.setVisibility(View.INVISIBLE);
+                            targetVisible = false;
                         }
                         break;
 
@@ -209,6 +216,14 @@ public class MazeFragment extends Fragment {
                             case 0:
                                 //wall
                                 gameFinishedRight(false);
+                                if(!targetVisible){
+                                    int x = Math.round(event.getRawX()-(target.getWidth()/2));
+                                    int y = Math.round(event.getRawY()-target.getHeight());
+                                    target.setX(x);
+                                    target.setY(y);
+                                    target.setVisibility(View.VISIBLE);
+                                    targetVisible = true;
+                                }
                                 break;
                             case 1:
                                 //path

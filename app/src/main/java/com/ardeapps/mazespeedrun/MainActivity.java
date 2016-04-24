@@ -33,14 +33,7 @@ import com.google.android.gms.games.leaderboard.LeaderboardScore;
 import com.google.android.gms.games.leaderboard.LeaderboardVariant;
 import com.google.android.gms.games.leaderboard.Leaderboards;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Locale;
 
 public class MainActivity extends FragmentActivity implements
         MainFragment.Listener, HighscoreFragment.Listener, MazeFragment.Listener,
@@ -75,8 +68,6 @@ public class MainActivity extends FragmentActivity implements
     final boolean ENABLE_DEBUG = true;
     final String TAG = "TanC";
 
-    boolean mShowSignIn = true;
-
     // create intent filter for mainFragment, switching highscores or start gameplay
     IntentFilter filter = new IntentFilter();
     /** MENU ITEMS */
@@ -90,12 +81,10 @@ public class MainActivity extends FragmentActivity implements
     Float finalTime = -1f;
     String maze_name;
     public SQLiteDatabase db;
-    String nameInCloud;
     long timeInCloud;
-    Uri urlimageInCloud;
     long positionInCloud;
 
-    /** BROADCASTRECIEVER FROM MazeAdapter for onclick events in map list or from customResultDialog*/
+    /** BROADCASTRECIEVER FROM MazeAdapter for onclick events on map list or from customResultDialog*/
     BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -136,6 +125,7 @@ public class MainActivity extends FragmentActivity implements
                 }
             }
         });
+
         Games.Leaderboards.loadCurrentPlayerLeaderboardScore(mGoogleApiClient, getString(leaderboardId), LeaderboardVariant.TIME_SPAN_WEEKLY,
                 LeaderboardVariant.COLLECTION_PUBLIC).setResultCallback(new ResultCallback<Leaderboards.LoadPlayerScoreResult>() {
             public void onResult(Leaderboards.LoadPlayerScoreResult arg0) {
@@ -323,31 +313,47 @@ public class MainActivity extends FragmentActivity implements
     }
 
     @Override
-    public void onGameFinished(Float requestedTime, String maze_name) {
+    public void onGetGlobalHighscoresRequest(String map_name) {
+        int leaderboardId = mazeData.getMapId(map_name);
+        getGlobalHighscores(leaderboardId);
+    }
+
+    @Override
+    public void onGameFinished(Float requestedTime, final String maze_name) {
         // update leaderboards
         this.maze_name = maze_name;
         this.finalTime = requestedTime; //to milliseconds for ex. 1333
 
-        long timeToCloud = (long)(requestedTime*1000);
-        int leaderboardId = mazeData.getMapId(maze_name);
-
-        Log.d(TAG, finalTime+" final time");
-        Log.d(TAG, timeToCloud + " timeToCloud");
-        Log.d(TAG, "uusi ennätys? "+(mazeData.getMapTime(maze_name) == -1 || mazeData.getMapTime(maze_name) > timeToCloud));
-        Log.d(TAG, mazeData.getMapTime(maze_name) + " getmapTime");
+        final long timeToCloud = (long)(requestedTime*1000);
+        final int leaderboardId = mazeData.getMapId(maze_name);
 
         //if time is first result, or best time
         if (mazeData.getMapTime(maze_name) == -1 || mazeData.getMapTime(maze_name) > timeToCloud) {
             mazeData.setNewMapTime(maze_name, timeToCloud);
-            Log.d(TAG, mazeData.getMapTime(maze_name) + " NewgetmapTime");
-            // push those accomplishments to the cloud, if signed in
-            if (isSignedIn() && leaderboardId > 0) {
-                Log.d(TAG, "222");
-                Games.Leaderboards.submitScore(mGoogleApiClient, getString(leaderboardId),
-                        mazeData.getMapTime(maze_name));
-            }
         }
 
+        if (isSignedIn() && leaderboardId > 0) {
+            Games.Leaderboards.loadCurrentPlayerLeaderboardScore(mGoogleApiClient, getString(leaderboardId), LeaderboardVariant.TIME_SPAN_DAILY,
+                    LeaderboardVariant.COLLECTION_PUBLIC).setResultCallback(new ResultCallback<Leaderboards.LoadPlayerScoreResult>() {
+                public void onResult(Leaderboards.LoadPlayerScoreResult arg0) {
+                    LeaderboardScore lbs = arg0.getScore();
+                    // Submit new highscore to cloud
+                    if(lbs != null){
+                        long time = lbs.getRawScore();
+                        if (timeToCloud < time) {
+                            Log.d(TAG, "NEW SCORE TO CLOUD: "+timeToCloud);
+                            Games.Leaderboards.submitScore(mGoogleApiClient, getString(leaderboardId),
+                                    timeToCloud);
+                        }
+                    } else {
+                        Log.d(TAG, "first NEW SCORE TO CLOUD: "+timeToCloud);
+                        Games.Leaderboards.submitScore(mGoogleApiClient, getString(leaderboardId),
+                                timeToCloud);
+                    }
+                }
+            });
+        }
+        // Compare and save to local SQLite database
         mazeData.saveLocal(db, finalTime, maze_name);
     }
 

@@ -3,6 +3,7 @@ package com.ardeapps.mazespeedrun;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -43,15 +45,15 @@ public class HighscoreFragment extends Fragment implements View.OnClickListener 
     ArrayList<Float> times = new ArrayList<>();
     ArrayAdapter<Float> adapter;
     //precise stats
-    String time_today;
-    String pos_today;
-    String time_thisweek;
-    String pos_thisweek;
-    String time_alltime;
-    String pos_alltime;
-    String global_top_today;
-    String global_top_thisweek;
-    String global_top_alltime;
+    String time_today = "-";
+    String pos_today = "-";
+    String time_thisweek = "-";
+    String pos_thisweek = "-";
+    String time_alltime = "-";
+    String pos_alltime = "-";
+    String global_top_today = "-";
+    String global_top_thisweek = "-";
+    String global_top_alltime = "-";
 
     boolean loggedIn = false;
 
@@ -59,6 +61,7 @@ public class HighscoreFragment extends Fragment implements View.OnClickListener 
         public void onShowLeaderboardsRequested(String name);
         public void onSignInButtonClicked();
         public void onSignOutButtonClicked();
+        public void onGetGlobalHighscoresRequest(String name);
     }
 
     Listener mListener = null;
@@ -101,7 +104,9 @@ public class HighscoreFragment extends Fragment implements View.OnClickListener 
         hs_map_title.setText(name);
 
         Button ldButton = (Button) v.findViewById(R.id.show_leaderboards_button);
+        ImageView refreshButton = (ImageView) v.findViewById(R.id.refresh_btn);
         ldButton.setOnClickListener(this);
+        refreshButton.setOnClickListener(this);
 
         View emptyView = v.findViewById(R.id.empty_view);
 
@@ -149,6 +154,8 @@ public class HighscoreFragment extends Fragment implements View.OnClickListener 
             case R.id.show_leaderboards_button:
                 mListener.onShowLeaderboardsRequested(name);
                 break;
+            case R.id.refresh_btn:
+                mListener.onGetGlobalHighscoresRequest(name);
         }
     }
 
@@ -166,8 +173,7 @@ public class HighscoreFragment extends Fragment implements View.OnClickListener 
         if(fTime == 0){
             return "-";
         }
-        String timeString = String.format(Locale.ENGLISH,"%.2f", fTime);
-        return timeString;
+        return String.format(Locale.ENGLISH,"%.2f", fTime);
     }
 
     public String formatPosToString(long pos){
@@ -212,6 +218,8 @@ public class HighscoreFragment extends Fragment implements View.OnClickListener 
         getActivity().findViewById(R.id.hs_alltime_ll).setVisibility(loggedIn ?
                 View.VISIBLE : View.GONE);
         getActivity().findViewById(R.id.show_leaderboards_button).setVisibility(loggedIn ?
+                View.VISIBLE : View.GONE);
+        getActivity().findViewById(R.id.refresh_btn).setVisibility(loggedIn ?
                 View.VISIBLE : View.GONE);
         TextView tv_global_title = (TextView) getActivity().findViewById(R.id.hs_global_title);
         tv_global_title.setText(loggedIn ? getString(R.string.hs_global_title) : getString(R.string.hs_global_title_default));

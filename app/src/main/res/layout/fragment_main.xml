@@ -11,6 +11,7 @@
         android:textSize="18sp"
         android:layout_marginBottom="10dp"
         android:id="@+id/hello"
+        android:gravity="center"
         android:background="#FFF3C9" />
     <ListView
         android:layout_width="match_parent"
