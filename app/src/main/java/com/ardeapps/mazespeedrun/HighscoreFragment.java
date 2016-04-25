@@ -74,7 +74,9 @@ public class HighscoreFragment extends Fragment implements View.OnClickListener 
 
         // get database instance
         db = (new Database(getActivity())).getReadableDatabase();
+    }
 
+    public void loadPersonalHighscores(){
         cursor = db.query(TABLE_MAZES, resultColumns, MAZE_NAME+"=?", new String[] {name}, null, null, null, null);
 
         if(cursor.getCount()!=0) {
@@ -94,11 +96,13 @@ public class HighscoreFragment extends Fragment implements View.OnClickListener 
 
         adapter = new HighscoreAdapter(getActivity(), times);
     }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_highscore, container, false);
+
+        loadPersonalHighscores();
+        mListener.onGetGlobalHighscoresRequest(name);
 
         TextView hs_map_title = (TextView) v.findViewById(R.id.map_title);
         hs_map_title.setText(name);

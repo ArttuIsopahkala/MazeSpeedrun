@@ -2,11 +2,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#FFCC7F">
+    android:background="@color/color_main">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#FFF3C9"
+        android:background="@color/color_secondary"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
         android:layout_marginEnd="10dp"
@@ -22,25 +22,24 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Map 1"
-                android:textColor="#808080"
+                android:textColor="@color/color_text"
                 android:textSize="20sp" />
             <TextView
                 android:id="@+id/maze_difficulty"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="#808080"
+                android:textColor="@color/color_text"
                 android:text="Your record: 1.23s" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Week's best: 1.01s"
-                android:textColor="#808080"
+                android:textColor="@color/color_text"
                 android:id="@+id/your_best" />
             <Button
-                style="?android:attr/buttonStyleSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Show statistics"
+                android:text="@string/show_highscores"
                 android:id="@+id/stats_btn" />
         </LinearLayout>
         <ImageView

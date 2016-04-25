@@ -4,6 +4,7 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
@@ -63,9 +64,9 @@ public class MazeFragment extends Fragment {
     int xTilesCount;
     int yTilesCount;
     int notification_area_height;
-    Bitmap wall, floor, goal;
+    Bitmap start, start1, floor, finish, finish1;
     ActionBar actionBar;
-    ImageView target;
+    ImageView target, startImage, finishImage;
     boolean targetVisible = false;
 
     boolean gameStarted = false;
@@ -150,45 +151,57 @@ public class MazeFragment extends Fragment {
                 imageHeight = (screen_height-notification_area_height) / yTilesCount;
                 imageWidth = maze_width / xTilesCount;
 
-                Bitmap imageBitmapWall = BitmapFactory.decodeResource(getResources(), getResources().getIdentifier("wall", "drawable", getActivity().getPackageName()));
-                wall = Bitmap.createScaledBitmap(imageBitmapWall, imageWidth, imageHeight, false);
+                Bitmap imageBitmapStart = BitmapFactory.decodeResource(getResources(), getResources().getIdentifier("start", "drawable", getActivity().getPackageName()));
+                start = Bitmap.createScaledBitmap(imageBitmapStart, imageWidth, imageHeight, false);
                 Bitmap imageBitmapFloor = BitmapFactory.decodeResource(getResources(), getResources().getIdentifier("floor", "drawable", getActivity().getPackageName()));
                 floor = Bitmap.createScaledBitmap(imageBitmapFloor, imageWidth, imageHeight, false);
-                Bitmap imageBitmapGoal = BitmapFactory.decodeResource(getResources(), getResources().getIdentifier("cup", "drawable", getActivity().getPackageName()));
-                goal = Bitmap.createScaledBitmap(imageBitmapGoal, imageWidth, imageHeight, false);
+                Bitmap imageBitmapFinish = BitmapFactory.decodeResource(getResources(), getResources().getIdentifier("finish", "drawable", getActivity().getPackageName()));
+                finish = Bitmap.createScaledBitmap(imageBitmapFinish, imageWidth, imageHeight, false);
+                Bitmap imageBitmapStart1 = BitmapFactory.decodeResource(getResources(), getResources().getIdentifier("start1", "drawable", getActivity().getPackageName()));
+                start1 = Bitmap.createScaledBitmap(imageBitmapStart1, imageWidth, imageHeight, false);
+                Bitmap imageBitmapFinish1 = BitmapFactory.decodeResource(getResources(), getResources().getIdentifier("finish1", "drawable", getActivity().getPackageName()));
+                finish1 = Bitmap.createScaledBitmap(imageBitmapFinish1, imageWidth, imageHeight, false);
 
+                startImage = new ImageView(getActivity());
+                finishImage = new ImageView(getActivity());
                 // Inflate the layout for this fragment
                 for (int i = 0, c = 0, r = 0; i < xTilesCount * yTilesCount; i++, c++) {
                     if (c == xTilesCount) {
                         c = 0;
                         r++;
                     }
-                    ImageView image = new ImageView(getActivity());
+                    ImageView floorImage = new ImageView(getActivity());
+                    ImageView wallImage = new ImageView(getActivity());
                     int imgtype = maze[r][c];
+                    Log.d("Cursor Object", imgtype+" imgtype");
                     switch (imgtype) {
+                        case 0:
+                            //wall
+                            mazeLayout.addView(wallImage);
+                            break;
                         case 1:
                             //path
-                            image.setImageBitmap(floor);
+                            floorImage.setImageBitmap(floor);
+                            mazeLayout.addView(floorImage);
                             break;
                         case 2:
                             //start
                             start_x = c;
                             start_y = r;
-                            image.setImageBitmap(wall);
+                            startImage.setImageBitmap(start);
+                            mazeLayout.addView(startImage);
                             break;
                         case 3:
                             //finish
-                            image.setImageBitmap(goal);
+                            finishImage.setImageBitmap(finish);
+                            mazeLayout.addView(finishImage);
                             break;
                     }
-
-                    mazeLayout.addView(image);
                 }
             }
         });
 
-        /** SET ONTOUCHLISTENER TO HANDLE TIME AND GAMELOGIC*/
-
+        /** SET ONTOUCHLISTENER TO HANDLE TIME AND GAME LOGIC*/
         mazeLayout.setOnTouchListener(new View.OnTouchListener() {
             public boolean onTouch(View v, MotionEvent event) {
                 float initialX, initialY;
@@ -208,6 +221,7 @@ public class MazeFragment extends Fragment {
                             gameStarted = true;
                             target.setVisibility(View.INVISIBLE);
                             targetVisible = false;
+                            startImage.setImageBitmap(start1);
                         }
                         break;
 
@@ -233,6 +247,7 @@ public class MazeFragment extends Fragment {
                             case 3:
                                 //finish, stop timer
                                 gameFinishedRight(true);
+                                finishImage.setImageBitmap(finish1);
                                 break;
                         }
                         break;
@@ -254,6 +269,11 @@ public class MazeFragment extends Fragment {
 
     public void setListener(Listener l) {
         mListener = l;
+    }
+
+    public void initializeGame(){
+        startImage.setImageBitmap(start);
+        finishImage.setImageBitmap(finish);
     }
 
     public void gameFinishedRight(boolean finishedRight){

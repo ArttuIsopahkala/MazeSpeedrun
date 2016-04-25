@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
@@ -37,7 +38,8 @@ import java.util.ArrayList;
 
 public class MainActivity extends FragmentActivity implements
         MainFragment.Listener, HighscoreFragment.Listener, MazeFragment.Listener,
-        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
+        DialogInterface.OnDismissListener {
 
     // Fragments
     MainFragment mainFragment;
@@ -94,9 +96,7 @@ public class MainActivity extends FragmentActivity implements
                     int leaderboardId = mazeData.getMapId(bundle.getString("name"));
                     highscoreFragment.setArguments(bundle);
                     //get global highscores if signed in
-                    if(isSignedIn()){
-                        getGlobalHighscores(leaderboardId);
-                    }
+                    getGlobalHighscores(leaderboardId);
                     switchToFragment(highscoreFragment);
                     break;
                 case MazeAdapter.SWITCH_TO_MAZE:
@@ -108,85 +108,87 @@ public class MainActivity extends FragmentActivity implements
     };
 
     public void getGlobalHighscores(int leaderboardId){
-        final ProgressDialog progress = new ProgressDialog(this);
-        progress.setTitle(getString(R.string.loading_title));
-        progress.setMessage(getString(R.string.loading_desc));
-        progress.setCancelable(false);
-        progress.show();
+        if(isSignedIn()) {
+            final ProgressDialog progress = new ProgressDialog(this);
+            progress.setTitle(getString(R.string.loading_title));
+            progress.setMessage(getString(R.string.loading_desc));
+            progress.setCancelable(false);
+            progress.show();
 
-        Games.Leaderboards.loadCurrentPlayerLeaderboardScore(mGoogleApiClient, getString(leaderboardId), LeaderboardVariant.TIME_SPAN_DAILY,
-                LeaderboardVariant.COLLECTION_PUBLIC).setResultCallback(new ResultCallback<Leaderboards.LoadPlayerScoreResult>() {
-            public void onResult(Leaderboards.LoadPlayerScoreResult arg0) {
-                if (isPlayerScoreResultValid(arg0)) {
-                    LeaderboardScore lbs = arg0.getScore();
-                    long time = lbs.getRawScore();
-                    long pos = lbs.getRank();
-                    highscoreFragment.setTodayPlayerScores(time, pos);
+            Games.Leaderboards.loadCurrentPlayerLeaderboardScore(mGoogleApiClient, getString(leaderboardId), LeaderboardVariant.TIME_SPAN_DAILY,
+                    LeaderboardVariant.COLLECTION_PUBLIC).setResultCallback(new ResultCallback<Leaderboards.LoadPlayerScoreResult>() {
+                public void onResult(Leaderboards.LoadPlayerScoreResult arg0) {
+                    if (isPlayerScoreResultValid(arg0)) {
+                        LeaderboardScore lbs = arg0.getScore();
+                        long time = lbs.getRawScore();
+                        long pos = lbs.getRank();
+                        highscoreFragment.setTodayPlayerScores(time, pos);
+                    }
                 }
-            }
-        });
+            });
 
-        Games.Leaderboards.loadCurrentPlayerLeaderboardScore(mGoogleApiClient, getString(leaderboardId), LeaderboardVariant.TIME_SPAN_WEEKLY,
-                LeaderboardVariant.COLLECTION_PUBLIC).setResultCallback(new ResultCallback<Leaderboards.LoadPlayerScoreResult>() {
-            public void onResult(Leaderboards.LoadPlayerScoreResult arg0) {
-                if (isPlayerScoreResultValid(arg0)) {
-                    LeaderboardScore lbs = arg0.getScore();
-                    long time = lbs.getRawScore();
-                    long pos = lbs.getRank();
-                    highscoreFragment.setThisWeekPlayerScores(time, pos);
+            Games.Leaderboards.loadCurrentPlayerLeaderboardScore(mGoogleApiClient, getString(leaderboardId), LeaderboardVariant.TIME_SPAN_WEEKLY,
+                    LeaderboardVariant.COLLECTION_PUBLIC).setResultCallback(new ResultCallback<Leaderboards.LoadPlayerScoreResult>() {
+                public void onResult(Leaderboards.LoadPlayerScoreResult arg0) {
+                    if (isPlayerScoreResultValid(arg0)) {
+                        LeaderboardScore lbs = arg0.getScore();
+                        long time = lbs.getRawScore();
+                        long pos = lbs.getRank();
+                        highscoreFragment.setThisWeekPlayerScores(time, pos);
+                    }
                 }
-            }
-        });
-        Games.Leaderboards.loadCurrentPlayerLeaderboardScore(mGoogleApiClient, getString(leaderboardId), LeaderboardVariant.TIME_SPAN_ALL_TIME,
-                LeaderboardVariant.COLLECTION_PUBLIC).setResultCallback(new ResultCallback<Leaderboards.LoadPlayerScoreResult>() {
-            public void onResult(Leaderboards.LoadPlayerScoreResult arg0) {
-                if (isPlayerScoreResultValid(arg0)) {
-                    LeaderboardScore lbs = arg0.getScore();
-                    long time = lbs.getRawScore();
-                    long pos = lbs.getRank();
-                    highscoreFragment.setAllTimePlayerScores(time, pos);
+            });
+            Games.Leaderboards.loadCurrentPlayerLeaderboardScore(mGoogleApiClient, getString(leaderboardId), LeaderboardVariant.TIME_SPAN_ALL_TIME,
+                    LeaderboardVariant.COLLECTION_PUBLIC).setResultCallback(new ResultCallback<Leaderboards.LoadPlayerScoreResult>() {
+                public void onResult(Leaderboards.LoadPlayerScoreResult arg0) {
+                    if (isPlayerScoreResultValid(arg0)) {
+                        LeaderboardScore lbs = arg0.getScore();
+                        long time = lbs.getRawScore();
+                        long pos = lbs.getRank();
+                        highscoreFragment.setAllTimePlayerScores(time, pos);
+                    }
                 }
-            }
-        });
-        Games.Leaderboards.loadTopScores(mGoogleApiClient, getString(leaderboardId),
-                LeaderboardVariant.TIME_SPAN_DAILY,
-                LeaderboardVariant.COLLECTION_PUBLIC, 1).setResultCallback(new ResultCallback<Leaderboards.LoadScoresResult>() {
+            });
+            Games.Leaderboards.loadTopScores(mGoogleApiClient, getString(leaderboardId),
+                    LeaderboardVariant.TIME_SPAN_DAILY,
+                    LeaderboardVariant.COLLECTION_PUBLIC, 1).setResultCallback(new ResultCallback<Leaderboards.LoadScoresResult>() {
 
-            public void onResult(Leaderboards.LoadScoresResult arg0) {
-                if (isScoreResultValid(arg0)) {
-                    LeaderboardScore lbs = arg0.getScores().get(0);
-                    long time = lbs.getRawScore();
-                    highscoreFragment.setTodayTopScore(time);
+                public void onResult(Leaderboards.LoadScoresResult arg0) {
+                    if (isScoreResultValid(arg0)) {
+                        LeaderboardScore lbs = arg0.getScores().get(0);
+                        long time = lbs.getRawScore();
+                        highscoreFragment.setTodayTopScore(time);
+                    }
                 }
-            }
-        });
-        Games.Leaderboards.loadTopScores(mGoogleApiClient, getString(leaderboardId),
-                LeaderboardVariant.TIME_SPAN_WEEKLY,
-                LeaderboardVariant.COLLECTION_PUBLIC, 1).setResultCallback(new ResultCallback<Leaderboards.LoadScoresResult>() {
+            });
+            Games.Leaderboards.loadTopScores(mGoogleApiClient, getString(leaderboardId),
+                    LeaderboardVariant.TIME_SPAN_WEEKLY,
+                    LeaderboardVariant.COLLECTION_PUBLIC, 1).setResultCallback(new ResultCallback<Leaderboards.LoadScoresResult>() {
 
-            public void onResult(Leaderboards.LoadScoresResult arg0) {
-                if (isScoreResultValid(arg0)) {
-                    LeaderboardScore lbs = arg0.getScores().get(0);
-                    long time = lbs.getRawScore();
-                    highscoreFragment.setThisWeekTopScore(time);
+                public void onResult(Leaderboards.LoadScoresResult arg0) {
+                    if (isScoreResultValid(arg0)) {
+                        LeaderboardScore lbs = arg0.getScores().get(0);
+                        long time = lbs.getRawScore();
+                        highscoreFragment.setThisWeekTopScore(time);
+                    }
                 }
-            }
-        });
-        Games.Leaderboards.loadTopScores(mGoogleApiClient, getString(leaderboardId),
-                LeaderboardVariant.TIME_SPAN_ALL_TIME,
-                LeaderboardVariant.COLLECTION_PUBLIC, 1).setResultCallback(new ResultCallback<Leaderboards.LoadScoresResult>() {
+            });
+            Games.Leaderboards.loadTopScores(mGoogleApiClient, getString(leaderboardId),
+                    LeaderboardVariant.TIME_SPAN_ALL_TIME,
+                    LeaderboardVariant.COLLECTION_PUBLIC, 1).setResultCallback(new ResultCallback<Leaderboards.LoadScoresResult>() {
 
-            public void onResult(Leaderboards.LoadScoresResult arg0) {
-                if (isScoreResultValid(arg0)) {
-                    LeaderboardScore lbs = arg0.getScores().get(0);
-                    long time = lbs.getRawScore();
-                    highscoreFragment.setAllTimeTopScore(time);
+                public void onResult(Leaderboards.LoadScoresResult arg0) {
+                    if (isScoreResultValid(arg0)) {
+                        LeaderboardScore lbs = arg0.getScores().get(0);
+                        long time = lbs.getRawScore();
+                        highscoreFragment.setAllTimeTopScore(time);
+                    }
+
+                    // To dismiss the dialog
+                    progress.dismiss();
                 }
-
-                // To dismiss the dialog
-                progress.dismiss();
-            }
-        });
+            });
+        }
     }
 
     @Override
@@ -288,6 +290,12 @@ public class MainActivity extends FragmentActivity implements
         if (getSupportFragmentManager().getBackStackEntryCount() > 0 ) {
             getSupportFragmentManager().popBackStack();
         } else super.onBackPressed();
+    }
+
+    @Override
+    public void onDismiss(final DialogInterface dialog) {
+        //Fragment dialog had been dismissed
+        mazeFragment.initializeGame();
     }
 
     private boolean isSignedIn() {

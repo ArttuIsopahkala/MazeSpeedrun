@@ -18,6 +18,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.android.gms.common.SignInButton;
 
 import java.util.ArrayList;
@@ -35,11 +37,6 @@ import java.util.Locale;
 public class MainFragment extends Fragment {
     //Database
     public SQLiteDatabase db;
-    public Cursor cursor;
-    public final String TABLE_MAZES = "mazes";
-    public final String MAZE_NAME = "maze_name";
-    public final String TIME = "time";
-    String[] resultColumns = new String[]{"_id", MAZE_NAME, TIME};
 
     ListView listView;
     MazeAdapter adapter;
@@ -99,12 +96,10 @@ public class MainFragment extends Fragment {
                 Float time = (float)maze.mapTime/1000;
                 String timeString = String.format(Locale.ENGLISH,"%.2f", time);
                 times.add(timeString);
-                Log.d("tanc", timeString);
             } else times.add(getString(R.string.default_zero));
         }
 
         adapter = new MazeAdapter(context, maze_names, maze_difficulties, maze_maps, times);
-        Log.d("tanc", "mazedata updated");
     }
 
     @Override
@@ -124,6 +119,9 @@ public class MainFragment extends Fragment {
         updateMazeData();
 
         View v = inflater.inflate(R.layout.fragment_main, container, false);
+        AdView mAdView = (AdView) v.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
 
         listView = (ListView) v.findViewById(R.id.listView);
         listView.setAdapter(adapter);
