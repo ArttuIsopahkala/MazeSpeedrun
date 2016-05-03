@@ -40,7 +40,7 @@ public class HighscoreFragment extends Fragment implements View.OnClickListener 
     public final String MAZE_NAME = "maze_name";
     public final String TIME = "time";
     String[] resultColumns = new String[]{"_id", MAZE_NAME, TIME};
-    ListView listview_personal, listview_alltime;
+    ListView listview_personal;
     String name;
     ArrayList<Float> times = new ArrayList<>();
     ArrayAdapter<Float> adapter;
@@ -71,12 +71,11 @@ public class HighscoreFragment extends Fragment implements View.OnClickListener 
         super.onCreate(savedInstanceState);
         Log.d("HighscoreFragment", "onCreate()");
         name = getArguments().getString("name");
-
-        // get database instance
-        db = (new Database(getActivity())).getReadableDatabase();
     }
 
     public void loadPersonalHighscores(){
+        // get database instance
+        db = (new Database(getActivity())).getReadableDatabase();
         cursor = db.query(TABLE_MAZES, resultColumns, MAZE_NAME+"=?", new String[] {name}, null, null, null, null);
 
         if(cursor.getCount()!=0) {
@@ -135,8 +134,8 @@ public class HighscoreFragment extends Fragment implements View.OnClickListener 
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
+    public void onDestroyView() {
+        super.onDestroyView();
         //clear adapter to empty listview
         if(!adapter.isEmpty()){
             adapter.clear();
@@ -189,44 +188,46 @@ public class HighscoreFragment extends Fragment implements View.OnClickListener 
 
     void updateUi() {
         if (getActivity() == null) return;
-        TextView tv_your_best_today = (TextView) getActivity().findViewById(R.id.your_best_today);
-        tv_your_best_today.setText(time_today);
-        TextView tv_position_today = (TextView) getActivity().findViewById(R.id.position_today);
-        tv_position_today.setText(pos_today);
+        if(this.isVisible()) {
+            TextView tv_your_best_today = (TextView) getActivity().findViewById(R.id.your_best_today);
+            tv_your_best_today.setText(time_today);
+            TextView tv_position_today = (TextView) getActivity().findViewById(R.id.position_today);
+            tv_position_today.setText(pos_today);
 
-        TextView tv_your_best_thisweek = (TextView) getActivity().findViewById(R.id.your_best_thisweek);
-        tv_your_best_thisweek.setText(time_thisweek);
-        TextView tv_position_thisweek = (TextView) getActivity().findViewById(R.id.position_thisweek);
-        tv_position_thisweek.setText(pos_thisweek);
+            TextView tv_your_best_thisweek = (TextView) getActivity().findViewById(R.id.your_best_thisweek);
+            tv_your_best_thisweek.setText(time_thisweek);
+            TextView tv_position_thisweek = (TextView) getActivity().findViewById(R.id.position_thisweek);
+            tv_position_thisweek.setText(pos_thisweek);
 
-        TextView tv_your_best_alltime = (TextView) getActivity().findViewById(R.id.your_best_alltime);
-        tv_your_best_alltime.setText(time_alltime);
-        TextView tv_position_alltime = (TextView) getActivity().findViewById(R.id.position_alltime);
-        tv_position_alltime.setText(pos_alltime);
+            TextView tv_your_best_alltime = (TextView) getActivity().findViewById(R.id.your_best_alltime);
+            tv_your_best_alltime.setText(time_alltime);
+            TextView tv_position_alltime = (TextView) getActivity().findViewById(R.id.position_alltime);
+            tv_position_alltime.setText(pos_alltime);
 
-        TextView tv_global_today = (TextView) getActivity().findViewById(R.id.global_best_today);
-        tv_global_today.setText(global_top_today);
+            TextView tv_global_today = (TextView) getActivity().findViewById(R.id.global_best_today);
+            tv_global_today.setText(global_top_today);
 
-        TextView tv_global_thisweek = (TextView) getActivity().findViewById(R.id.global_best_thisweek);
-        tv_global_thisweek.setText(global_top_thisweek);
+            TextView tv_global_thisweek = (TextView) getActivity().findViewById(R.id.global_best_thisweek);
+            tv_global_thisweek.setText(global_top_thisweek);
 
-        TextView tv_global_alltime = (TextView) getActivity().findViewById(R.id.global_best_alltime);
+            TextView tv_global_alltime = (TextView) getActivity().findViewById(R.id.global_best_alltime);
 
-        tv_global_alltime.setText(global_top_alltime);
-        getActivity().findViewById(R.id.hs_title_ll).setVisibility(loggedIn ?
-                View.VISIBLE : View.GONE);
-        getActivity().findViewById(R.id.hs_today_ll).setVisibility(loggedIn ?
-                View.VISIBLE : View.GONE);
-        getActivity().findViewById(R.id.hs_thisweek_ll).setVisibility(loggedIn ?
-                View.VISIBLE : View.GONE);
-        getActivity().findViewById(R.id.hs_alltime_ll).setVisibility(loggedIn ?
-                View.VISIBLE : View.GONE);
-        getActivity().findViewById(R.id.show_leaderboards_button).setVisibility(loggedIn ?
-                View.VISIBLE : View.GONE);
-        getActivity().findViewById(R.id.refresh_btn).setVisibility(loggedIn ?
-                View.VISIBLE : View.GONE);
-        TextView tv_global_title = (TextView) getActivity().findViewById(R.id.hs_global_title);
-        tv_global_title.setText(loggedIn ? getString(R.string.hs_global_title) : getString(R.string.hs_global_title_default));
+            tv_global_alltime.setText(global_top_alltime);
+            getActivity().findViewById(R.id.hs_title_ll).setVisibility(loggedIn ?
+                    View.VISIBLE : View.GONE);
+            getActivity().findViewById(R.id.hs_today_ll).setVisibility(loggedIn ?
+                    View.VISIBLE : View.GONE);
+            getActivity().findViewById(R.id.hs_thisweek_ll).setVisibility(loggedIn ?
+                    View.VISIBLE : View.GONE);
+            getActivity().findViewById(R.id.hs_alltime_ll).setVisibility(loggedIn ?
+                    View.VISIBLE : View.GONE);
+            getActivity().findViewById(R.id.show_leaderboards_button).setVisibility(loggedIn ?
+                    View.VISIBLE : View.GONE);
+            getActivity().findViewById(R.id.refresh_btn).setVisibility(loggedIn ?
+                    View.VISIBLE : View.GONE);
+            TextView tv_global_title = (TextView) getActivity().findViewById(R.id.hs_global_title);
+            tv_global_title.setText(loggedIn ? getString(R.string.hs_global_title) : getString(R.string.hs_global_title_default));
+        }
     }
 
     public void setTodayPlayerScores(long time, long position){

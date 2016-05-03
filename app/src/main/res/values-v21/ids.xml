@@ -4,11 +4,36 @@ Google Play game services IDs.
 Save this file as res/values/games-ids.xml in your project.
 -->
 <resources>
-    <string name="app_id">462682182118</string>
-    <string name="package_name">com.ardeapps.mazespeedrun</string>
-    <string name="leaderboard_map_1">CgkI5qOH0LsNEAIQAQ</string>
-    <string name="leaderboard_map_2">CgkI5qOH0LsNEAIQAg</string>
-    <string name="leaderboard_map_3">CgkI5qOH0LsNEAIQAw</string>
-    <string name="leaderboard_map_4">CgkI5qOH0LsNEAIQBA</string>
-    <string name="leaderboard_map_5">CgkI5qOH0LsNEAIQBQ</string>
+    <string name="app_id" translatable="false">462682182118</string>
+    <string name="package_name" translatable="false">com.ardeapps.mazespeedrun</string>
+    <string name="leaderboard_map_1" translatable="false">CgkI5qOH0LsNEAIQAQ</string>
+    <string name="leaderboard_map_2" translatable="false">CgkI5qOH0LsNEAIQAg</string>
+    <string name="leaderboard_map_3" translatable="false">CgkI5qOH0LsNEAIQAw</string>
+    <string name="leaderboard_map_4" translatable="false">CgkI5qOH0LsNEAIQBA</string>
+    <string name="leaderboard_map_5" translatable="false">CgkI5qOH0LsNEAIQBQ</string>
+    <string name="leaderboard_map_6" translatable="false">CgkI5qOH0LsNEAIQBg</string>
+    <string name="leaderboard_map_7" translatable="false">CgkI5qOH0LsNEAIQBw</string>
+    <string name="leaderboard_map_8" translatable="false">CgkI5qOH0LsNEAIQCA</string>
+    <string name="leaderboard_map_9" translatable="false">CgkI5qOH0LsNEAIQCQ</string>
+    <string name="leaderboard_map_10" translatable="false">CgkI5qOH0LsNEAIQCg</string>
+    <string name="leaderboard_map_11" translatable="false">CgkI5qOH0LsNEAIQCw</string>
+    <string name="leaderboard_map_12" translatable="false">CgkI5qOH0LsNEAIQDA</string>
+    <string name="leaderboard_map_13" translatable="false">CgkI5qOH0LsNEAIQDQ</string>
+    <string name="leaderboard_map_14" translatable="false">CgkI5qOH0LsNEAIQDg</string>
+    <string name="leaderboard_map_15" translatable="false">CgkI5qOH0LsNEAIQDw</string>
+    <string name="leaderboard_map_16" translatable="false">CgkI5qOH0LsNEAIQEA</string>
+    <string name="leaderboard_map_17" translatable="false">CgkI5qOH0LsNEAIQEQ</string>
+    <string name="leaderboard_map_18" translatable="false">CgkI5qOH0LsNEAIQEg</string>
+    <string name="leaderboard_map_19" translatable="false">CgkI5qOH0LsNEAIQEw</string>
+    <string name="leaderboard_map_20" translatable="false">CgkI5qOH0LsNEAIQFA</string>
+    <string name="leaderboard_map_21" translatable="false">CgkI5qOH0LsNEAIQFQ</string>
+    <string name="leaderboard_map_22" translatable="false">CgkI5qOH0LsNEAIQFg</string>
+    <string name="leaderboard_map_23" translatable="false">CgkI5qOH0LsNEAIQFw</string>
+    <string name="leaderboard_map_24" translatable="false">CgkI5qOH0LsNEAIQGA</string>
+    <string name="leaderboard_map_25" translatable="false">CgkI5qOH0LsNEAIQGQ</string>
+    <string name="leaderboard_map_26" translatable="false">CgkI5qOH0LsNEAIQGg</string>
+    <string name="leaderboard_map_27" translatable="false">CgkI5qOH0LsNEAIQGw</string>
+    <string name="leaderboard_map_28" translatable="false">CgkI5qOH0LsNEAIQHA</string>
+    <string name="leaderboard_map_29" translatable="false">CgkI5qOH0LsNEAIQHQ</string>
+    <string name="leaderboard_map_30" translatable="false">CgkI5qOH0LsNEAIQHg</string>
 </resources>

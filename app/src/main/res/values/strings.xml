@@ -1,66 +1,53 @@
 <resources>
     <string name="app_name">Maze Speedrun</string>
 
-    <string name="selectplayer">Player settings</string>
-    <string name="username">Username:</string>
-    <string name="country">Country:</string>
-    <string name="save">Save</string>
     <string name="greeting">Hello</string>
-    <string name="saved">Saved</string>
     <string name="action_about">About</string>
     <string name="action_leaderboards">Leaderboards</string>
     <string name="action_logout">Log out</string>
     <string name="action_login">Log in</string>
-    <string name="default_zero">0.00</string>
-    <string name="seconds">seconds</string>
+    <string name="default_zero" translatable="false">0.00</string>
     <string name="easy">Easy</string>
     <string name="medium">Medium</string>
     <string name="hard">Hard</string>
     <string name="time">Time</string>
     <string name="personal_best_times">Personal best times</string>
-    <string name="all_time_best_times">All time best times</string>
-    <string name="info_actionbar">Labyrinth Speedtest - About</string>
     <string name="info_copyright">Copyright &#169; Arde Apps</string>
-    <string name="info_data_title">Data transfer</string>
     <string name="info_version">Version:</string>
-    <string name="info_usage_title">Usage</string>
+    <string name="info_usage_title">How to play</string>
     <string name="info_link_rate">Rate the app</string>
     <string name="info_link_more">More apps</string>
     <string name="info_feedback_title">Feedback</string>
-    <string name="info_feedback_content">Rate the app and at the same time give feedback about app\'s functionality and suggest new features.</string>
-    <string name="info_title_content">Read tens of comics conveniently with your mobile phone.</string>
-    <string name="info_data_content">The app loads data from internet. Developer is not responsible of possible data transfer costs.</string>
-    <string name="info_usage_content">You can choose comics\' language from dropdown list. Add comics to favourites list by pressing heart or remove favourite pressing cross. Choose comic to read by pressing it. Save bookmark by pressing star and return to it via history button.</string>
-    <string name="slow_connection">Slow connection. Try again!</string>
-    <string name="title_activity_highscore">HighscoreActivity</string>
+    <string name="info_feedback_content">Thank you for playing our game! We would be grateful if you rate the app. You can also give feedback about app\'s functionality and suggest new features.</string>
+    <string name="info_title_content">Find your way to the goal as fast as you can without hitting walls. Beat records and reach your way to the top lists!</string>
+    <string name="info_usage_content">Timer starts when you touch start tile. Hold your finger down and find your way to the finish line without touching walls. In leaderboards you can see worldwide best times and your friends\' times. Attention! Your time will be saved to leaderboards only if you are logged in.</string>
     <string name="no_results_yet">No results yet!</string>
-    <string name="hs_global_title">Global highscores</string>
-    <string name="hs_global_title_default">Sign in to see global highscores!</string>
+    <string name="hs_global_title">Global high scores</string>
+    <string name="hs_global_title_default">Sign in to see global high scores!</string>
     <string name="hs_your_best">Your best</string>
     <string name="hs_position">Position</string>
     <string name="hs_global_best">Global best</string>
     <string name="hs_today">Today</string>
     <string name="hs_thisweek">This week</string>
     <string name="hs_alltime">All time</string>
+    <string name="your_time">Your time was</string>
+    <string name="your_best">Your best is</string>
+    <string name="difficulty">Difficulty</string>
+    <string name="not_finish">Your did not get to the finish line!</string>
+    <string name="new_highscore">You made the new personal high score!</string>
 
     <string name="loading_title">Loading</string>
-    <string name="loading_desc">Looking for global highscores..</string>
-    <string name="map_title_default">Map</string>
-    <string name="default_greeting">Sign in to share your results world-wide!</string>
-    <string name="see_your_progress">See your progress:</string>
-    <string name="show_achievements">Show Achievements</string>
+    <string name="loading_desc">Looking for global high scores..</string>
+    <string name="map_title_default" translatable="false">Map</string>
+    <string name="your_time_default">Your time was: ???</string>
+    <string name="your_best_default">Your best time: ???</string>
+    <string name="default_greeting">Sign in to share your results worldwide!</string>
     <string name="show_leaderboards">Show full leaderboard</string>
-    <string name="sign_in_why">Sign in with Google to share your scores and achievements with your friends.</string>
-    <string name="you_are_signed_in">You are signed in with Google.</string>
-    <string name="sign_out">Sign out</string>
-    <string name="you_win">You win! Your score is:</string>
-    <string name="sign_in_to_upload_this_score">Sign in now to upload this score, save your achievements and share your progress with friends.</string>
-    <string name="signin_other_error">There was an issue with sign in.  Please try again later.</string>
-    <string name="achievements_not_available">Please sign in to view achievements.</string>
+    <string name="signin_other_error">There was an issue with sign in. Please try again later.</string>
+    <string name="no_connection">No internet connection</string>
     <string name="leaderboards_not_available">Please sign in to view leaderboards.</string>
-    <string name="your_progress_will_be_uploaded">Your existing achievements and score will be uploaded shortly.</string>
-    <string name="show_highscores">Show highscores</string>
+    <string name="show_highscores">Show high scores</string>
     <string name="again">Again!</string>
-    <string name="banner_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="banner_ad_unit_id" translatable="false">ca-app-pub-3940256099942544/6300978111</string>
 
 </resources>

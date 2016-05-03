@@ -26,11 +26,14 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.Space;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Locale;
 
 
 /**
@@ -42,19 +45,11 @@ import java.util.Comparator;
  * create an instance of this fragment.
  */
 public class MazeFragment extends Fragment {
-    //Database
-    public SQLiteDatabase db;
-    public Cursor cursor;
-    public final String TABLE_MAZES = "mazes";
-    public final String MAZE_NAME = "maze_name";
-    public final String TIME = "time";
-    String[] resultColumns = new String[]{"_id", MAZE_NAME, TIME};
-    ArrayList<Float> times = new ArrayList<>();
-
     private int maze_width;
     private int maze_height;
     GridLayout mazeLayout;
     private String name = "";
+    private String time = "-";
     private int[][] maze;
     float start_x;
     float start_y;
@@ -69,8 +64,13 @@ public class MazeFragment extends Fragment {
     ImageView target, startImage, finishImage;
     boolean targetVisible = false;
 
+    boolean newBestTime = false;
+
     boolean gameStarted = false;
     Float finalTime = 0.0f;
+
+    MazeData mazeData = new MazeData();
+    ArrayList<MazeData.Maze> mazes = new ArrayList<>();
 
     //timer
     long startTime = 0;
@@ -90,6 +90,7 @@ public class MazeFragment extends Fragment {
 
     public interface Listener {
         public void onGameFinished(Float time, String maze_name);
+        public void onUpdateBestTime(String maze_name);
     }
 
     Listener mListener = null;
@@ -100,10 +101,8 @@ public class MazeFragment extends Fragment {
         if (getArguments() != null) {
             name = getArguments().getString("name");
             maze = (int[][]) getArguments().getSerializable("map");
+            time = getArguments().getString("time");
         }
-
-        // get database instance
-        db = (new Database(getActivity())).getWritableDatabase();
     }
     @Override
     public void onResume() {
@@ -144,13 +143,11 @@ public class MazeFragment extends Fragment {
                 Point size = new Point();
                 display.getSize(size);
                 int screen_height = size.y;
-                int screen_width = size.x;
 
                 notification_area_height = screen_height - maze_height - actionbar_height;
 
                 imageHeight = (screen_height-notification_area_height) / yTilesCount;
                 imageWidth = maze_width / xTilesCount;
-
                 Bitmap imageBitmapStart = BitmapFactory.decodeResource(getResources(), getResources().getIdentifier("start", "drawable", getActivity().getPackageName()));
                 start = Bitmap.createScaledBitmap(imageBitmapStart, imageWidth, imageHeight, false);
                 Bitmap imageBitmapFloor = BitmapFactory.decodeResource(getResources(), getResources().getIdentifier("floor", "drawable", getActivity().getPackageName()));
@@ -172,12 +169,13 @@ public class MazeFragment extends Fragment {
                     }
                     ImageView floorImage = new ImageView(getActivity());
                     ImageView wallImage = new ImageView(getActivity());
+                    Space wall = new Space(getActivity());
+                    wall.setLayoutParams(new FrameLayout.LayoutParams(imageWidth, imageHeight));
                     int imgtype = maze[r][c];
-                    Log.d("Cursor Object", imgtype+" imgtype");
                     switch (imgtype) {
                         case 0:
                             //wall
-                            mazeLayout.addView(wallImage);
+                            mazeLayout.addView(wall);
                             break;
                         case 1:
                             //path
@@ -211,10 +209,7 @@ public class MazeFragment extends Fragment {
                         //start timer only if finger touches start tile
                         initialX = event.getRawX();
                         initialY = event.getRawY();
-                        if(initialX > (start_x-1)*imageWidth &&
-                                initialX < imageWidth*xTilesCount-((xTilesCount-start_x)*imageWidth) &&
-                                initialY > notification_area_height+(start_y)*imageHeight &&
-                                initialY < notification_area_height+(imageHeight*yTilesCount-((yTilesCount-start_y-1)*imageHeight))){
+                        if(whatViewIsIt(initialX, initialY) == 2){
                             //start timer
                             startTime = System.currentTimeMillis();
                             timerHandler.postDelayed(timerRunnable, 0);
@@ -229,8 +224,7 @@ public class MazeFragment extends Fragment {
                         switch (whatViewIsIt(event.getRawX(), event.getRawY())){
                             case 0:
                                 //wall
-                                gameFinishedRight(false);
-                                if(!targetVisible){
+                                if(!targetVisible && gameStarted){
                                     int x = Math.round(event.getRawX()-(target.getWidth()/2));
                                     int y = Math.round(event.getRawY()-target.getHeight());
                                     target.setX(x);
@@ -238,16 +232,18 @@ public class MazeFragment extends Fragment {
                                     target.setVisibility(View.VISIBLE);
                                     targetVisible = true;
                                 }
+                                gameFinishedRight(false);
                                 break;
                             case 1:
                                 //path
-                                Log.d("Cursor Object", "PATH");
                                 // TODO: 21.3.2016 maybe some path?
                                 break;
                             case 3:
                                 //finish, stop timer
+                                if(gameStarted){
+                                    finishImage.setImageBitmap(finish1);
+                                }
                                 gameFinishedRight(true);
-                                finishImage.setImageBitmap(finish1);
                                 break;
                         }
                         break;
@@ -274,22 +270,35 @@ public class MazeFragment extends Fragment {
     public void initializeGame(){
         startImage.setImageBitmap(start);
         finishImage.setImageBitmap(finish);
+        clockText.setText(R.string.default_zero);
+    }
+    public void setMapTime(long requestTime){
+        //get time from MazeData for compare and check new highscore
+        Float currentTime = (float)requestTime/1000;
+        Float previousTime = Float.parseFloat(time);
+
+        newBestTime = false;
+        if(currentTime < previousTime || previousTime == 0){
+            time = String.format(Locale.ENGLISH,"%.2f", currentTime);
+            newBestTime = true;
+        }
     }
 
     public void gameFinishedRight(boolean finishedRight){
         android.support.v4.app.FragmentManager manager = getFragmentManager();
-
         if(gameStarted) {
             timerHandler.removeCallbacks(timerRunnable);
             if(finishedRight){
                 //player reach finish tile
                 finalTime = Float.parseFloat(clockText.getText().toString());
                 mListener.onGameFinished(finalTime, name);
-            } else finalTime = Float.parseFloat(getString(R.string.default_zero));
+            } else {
+                finalTime = Float.parseFloat(getString(R.string.default_zero));
+                clockText.setText(R.string.default_zero);
+            }
             gameStarted = false;
-            clockText.setText(R.string.default_zero);
-
-            DialogFragment resultDialog = CustomResultDialog.newInstance(name, finalTime);
+            mListener.onUpdateBestTime(name);
+            DialogFragment resultDialog = CustomResultDialog.newInstance(name, finalTime, time, newBestTime);
             resultDialog.show(manager, "resultDialog");
         }
     }
@@ -302,8 +311,8 @@ public class MazeFragment extends Fragment {
             }
             int imgtype = maze[r][c];
             //check what kind of tile finger touches
-            if (x > (c - 1) * imageWidth &&
-                    x < imageWidth * xTilesCount - ((xTilesCount - c) * imageWidth) &&
+            if (x > c * imageWidth &&
+                    x < imageWidth * xTilesCount - ((xTilesCount - c - 1) * imageWidth) &&
                     y > notification_area_height + r * imageHeight &&
                     y < notification_area_height + (imageHeight * yTilesCount - ((yTilesCount - r - 1) * imageHeight))) {
                 return imgtype;

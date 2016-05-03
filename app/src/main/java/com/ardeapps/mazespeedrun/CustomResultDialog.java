@@ -28,18 +28,22 @@ public class CustomResultDialog extends DialogFragment implements
     public Button highscores, again;
     public TextView nameText, timeText, bestTimeText;
     String map_name;
+    String best_time;
     Float time;
+    boolean isNewHighscore;
 
     /**
      * Create a new instance of MyDialogFragment, providing "num"
      * as an argument.
      */
-    static CustomResultDialog newInstance(String name, Float finalTime) {
+    static CustomResultDialog newInstance(String name, Float finalTime, String bestTime, boolean newBest) {
         CustomResultDialog f = new CustomResultDialog();
 
         // Supply num input as an argument.
         Bundle args = new Bundle();
         args.putString("name", name);
+        args.putString("best_time", bestTime);
+        args.putBoolean("new_best", newBest);
         //Check if not finished right
         if(finalTime != 0){
             args.putFloat("time", finalTime);
@@ -54,6 +58,8 @@ public class CustomResultDialog extends DialogFragment implements
         super.onCreate(savedInstanceState);
         map_name = getArguments().getString("name", "Map");
         time = getArguments().getFloat("time", 0.00f);
+        best_time = getArguments().getString("best_time", "-");
+        isNewHighscore = getArguments().getBoolean("new_best", false);
     }
 
     @Nullable
@@ -64,6 +70,7 @@ public class CustomResultDialog extends DialogFragment implements
         getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
 
+
         timeText = (TextView) v.findViewById(R.id.time);
         bestTimeText = (TextView) v.findViewById(R.id.time_best);
         nameText = (TextView) v.findViewById(R.id.map_name);
@@ -73,8 +80,21 @@ public class CustomResultDialog extends DialogFragment implements
         again.setOnClickListener(this);
 
         nameText.setText(map_name);
-        timeText.setText(time + " " + getString(R.string.seconds));
-        bestTimeText.setText("asd");
+
+        float fBestTime = Float.parseFloat(best_time);
+
+        if(time == 0){
+            timeText.setText(getString(R.string.not_finish));
+        }else timeText.setText(getString(R.string.your_time)+ ": " + time + "s");
+
+        Log.d("resultdialog", "best_time: "+best_time);
+        Log.d("resultdialog", "new highscrore: "+isNewHighscore);
+        if(best_time.contains("0.00")){
+            bestTimeText.setText(getString(R.string.your_best)+": -");
+        }else if(isNewHighscore){
+            bestTimeText.setText(getString(R.string.new_highscore));
+        }else bestTimeText.setText(getString(R.string.your_best)+": "+best_time+"s");
+
 
         return v;
     }

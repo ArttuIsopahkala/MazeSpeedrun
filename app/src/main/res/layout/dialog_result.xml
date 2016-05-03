@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="map"
+        android:text="@string/map_title_default"
         android:textStyle="italic|bold"
         android:id="@+id/map_name"
         android:textColor="@color/color_text"
@@ -21,37 +21,40 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="your time"
+        android:text="@string/your_time_default"
         android:textColor="@color/color_text"
+        android:textSize="16sp"
+        android:layout_marginBottom="10dp"
         android:id="@+id/time"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="your time"
+        android:text="@string/your_best_default"
         android:textColor="@color/color_text"
         android:id="@+id/time_best"/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="your position on week"
-        android:textColor="@color/color_text"
-        android:id="@+id/position"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:layout_marginTop="10dp"
         android:gravity="center">
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
             android:text="@string/show_highscores"
-            android:id="@+id/btn_highscores"/>
+            android:id="@+id/btn_highscores"
+            android:background="@drawable/custom_button"
+            android:textSize="16sp"
+            android:textColor="@color/color_text_light"/>
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/again"
-            android:id="@+id/btn_again"/>
+            android:id="@+id/btn_again"
+            android:background="@drawable/custom_button"
+            android:textSize="16sp"
+            android:textColor="@color/color_text_light" />
     </LinearLayout>
 </LinearLayout>

@@ -30,17 +30,17 @@ public class MazeAdapter extends BaseAdapter{
     ArrayList<int[][]> result_map;
     ArrayList<String> result_time;
     Context context;
-    int[] imageId;
+    ArrayList<Integer> imageIds;
     private static LayoutInflater inflater = null;
 
-    public MazeAdapter(Context ctx, ArrayList<String> maze_name, ArrayList<String> maze_difficulty, ArrayList<int[][]> maze_map, ArrayList<String> times) {
+    public MazeAdapter(Context ctx, ArrayList<String> maze_name, ArrayList<String> maze_difficulty, ArrayList<int[][]> maze_map, ArrayList<String> times, ArrayList<Integer> mapImages) {
         // TODO Auto-generated constructor stub
         result_name = maze_name;
         result_difficulty = maze_difficulty;
         result_map = maze_map;
         result_time = times;
         context = ctx;
-        //imageId=prgmImages;
+        imageIds = mapImages;
         inflater = (LayoutInflater) context.
                 getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -79,18 +79,19 @@ public class MazeAdapter extends BaseAdapter{
             convertView = inflater.inflate(R.layout.list_item, null);
         }
         holder.title_tv = (TextView) convertView.findViewById(R.id.maze_name);
-        // holder.img=(ImageView) rowView.findViewById(R.id.maze_difficulty);
+        holder.img = (ImageView) convertView.findViewById(R.id.map_image);
         holder.difficulty_tv = (TextView) convertView.findViewById(R.id.maze_difficulty);
         holder.your_best_tv = (TextView) convertView.findViewById(R.id.your_best);
         holder.stats_btn = (Button) convertView.findViewById(R.id.stats_btn);
 
-        holder.title_tv.setText(result_name.get(position)+" - "+result_difficulty.get(position));
+        holder.title_tv.setText(result_name.get(position));
         holder.difficulty_tv.setText(result_difficulty.get(position));
-        holder.your_best_tv.setText(result_time.get(position));
-        //holder.img.setImageResource(imageId[position]);
+        holder.your_best_tv.setText(parent.getResources().getString(R.string.hs_your_best)+": "+result_time.get(position)+"s");
+        holder.img.setImageResource(imageIds.get(position));
         final Bundle mBundle = new Bundle();
         mBundle.putString("name", result_name.get(position));
         mBundle.putSerializable("map", result_map.get(position));
+        mBundle.putString("time", result_time.get(position));
 
         //send broadcast to mainActivity to open highscores or maze
         convertView.setOnClickListener(new View.OnClickListener() {

@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <item name="color_main" type="color">#FFCC7F</item>
+    <item name="color_main" type="color">#ffc266</item>
     <item name="color_secondary" type="color">#FFF3C9</item>
     <item name="color_text" type="color">#242424</item>
     <item name="color_text_light" type="color">#F4F4F4</item>
     <item name="color_actionbar" type="color">#955900</item>
+    <item name="color_shadow" type="color">#333333</item>
+    <item name="color_btn_pressed" type="color">#b36b00</item>
+    <item name="color_btn" type="color">#955900</item>
+    <item name="color_clock" type="color">#A6955900</item>
 </resources>

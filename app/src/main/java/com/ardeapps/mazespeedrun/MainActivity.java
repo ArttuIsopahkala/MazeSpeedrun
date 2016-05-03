@@ -8,14 +8,20 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -48,6 +54,11 @@ public class MainActivity extends FragmentActivity implements
     InfoFragment infoFragment;
     MazeData mazeData = new MazeData();
     ArrayList<MazeData.Maze> mazes;
+
+    // Create Preference to check if application is going to be called first
+    // time.
+    SharedPreferences appPref;
+    boolean isFirstTime = true;
 
     // Client used to interact with Google APIs
     private GoogleApiClient mGoogleApiClient;
@@ -83,8 +94,6 @@ public class MainActivity extends FragmentActivity implements
     Float finalTime = -1f;
     String maze_name;
     public SQLiteDatabase db;
-    long timeInCloud;
-    long positionInCloud;
 
     /** BROADCASTRECIEVER FROM MazeAdapter for onclick events on map list or from customResultDialog*/
     BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
@@ -93,10 +102,7 @@ public class MainActivity extends FragmentActivity implements
             final Bundle bundle = intent.getExtras();
             switch(intent.getAction()){
                 case MazeAdapter.SWITCH_TO_HIGHSCORE:
-                    int leaderboardId = mazeData.getMapId(bundle.getString("name"));
                     highscoreFragment.setArguments(bundle);
-                    //get global highscores if signed in
-                    getGlobalHighscores(leaderboardId);
                     switchToFragment(highscoreFragment);
                     break;
                 case MazeAdapter.SWITCH_TO_MAZE:
@@ -108,7 +114,9 @@ public class MainActivity extends FragmentActivity implements
     };
 
     public void getGlobalHighscores(int leaderboardId){
-        if(isSignedIn()) {
+        if(!isNetworkAvailable()){
+            Toast.makeText(MainActivity.this, getString(R.string.no_connection), Toast.LENGTH_SHORT).show();
+        } else if(isSignedIn()) {
             final ProgressDialog progress = new ProgressDialog(this);
             progress.setTitle(getString(R.string.loading_title));
             progress.setMessage(getString(R.string.loading_desc));
@@ -228,6 +236,34 @@ public class MainActivity extends FragmentActivity implements
 
         // load local times from database and update
         mazeData.loadLocal(db);
+
+        // Get preference value to know that is it first time application is
+        // being called.
+        appPref = getSharedPreferences("isFirstTime", 0);
+        isFirstTime = appPref.getBoolean("isFirstTime", true);
+        if (isFirstTime) {
+            // Create explicit intent which will be used to call Our application
+            // when some one clicked on short cut
+            Intent shortcutIntent = new Intent(getApplicationContext(),
+                    MainActivity.class);
+            shortcutIntent.setAction(Intent.ACTION_MAIN);
+            Intent intent = new Intent();
+
+            // Create Implicit intent and assign Shortcut Application Name, Icon
+            intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
+            intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, R.string.app_name);
+            intent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE,
+                    Intent.ShortcutIconResource.fromContext(
+                            getApplicationContext(), R.mipmap.ic_launcher));
+            intent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
+            getApplicationContext().sendBroadcast(intent);
+
+            // Set preference to inform that we have created shortcut on
+            // Homescreen
+            SharedPreferences.Editor editor = appPref.edit();
+            editor.putBoolean("isFirstTime", false);
+            editor.apply();
+        }
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -240,6 +276,15 @@ public class MainActivity extends FragmentActivity implements
             menu.add(Menu.NONE, MENU_ITEM_ID_LEADERBOARDS, Menu.NONE,getString(R.string.action_leaderboards)).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
             menu.add(Menu.NONE, MENU_ITEM_ID_LOGOUT, Menu.NONE, getString(R.string.action_logout)).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
         }
+        // Style overflow items text color
+        for(int i = 0; i < menu.size(); i++){
+            MenuItem menuItem = menu.getItem(i);
+            CharSequence menuTitle = menuItem.getTitle();
+            SpannableString styledMenuTitle = new SpannableString(menuTitle);
+            styledMenuTitle.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.color_text_light)), 0, menuTitle.length(), 0);
+            menuItem.setTitle(styledMenuTitle);
+        }
+
         return true;
     }
 
@@ -272,7 +317,9 @@ public class MainActivity extends FragmentActivity implements
     protected void onStart() {
         super.onStart();
         Log.d(TAG, "onStart(): connecting");
-        mGoogleApiClient.connect();
+        if(isNetworkAvailable()){
+            mGoogleApiClient.connect();
+        }
         registerReceiver(mBroadcastReceiver, filter);
     }
     @Override
@@ -291,11 +338,17 @@ public class MainActivity extends FragmentActivity implements
             getSupportFragmentManager().popBackStack();
         } else super.onBackPressed();
     }
-
     @Override
     public void onDismiss(final DialogInterface dialog) {
         //Fragment dialog had been dismissed
         mazeFragment.initializeGame();
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
     }
 
     private boolean isSignedIn() {
@@ -313,10 +366,10 @@ public class MainActivity extends FragmentActivity implements
     @Override
     public void onShowLeaderboardsRequested(String map_name) {
         int leaderboardId = mazeData.getMapId(map_name);
-        if (isSignedIn()) {
+        if (isSignedIn() && isNetworkAvailable()) {
             startActivityForResult(Games.Leaderboards.getLeaderboardIntent(mGoogleApiClient, getString(leaderboardId), LeaderboardVariant.COLLECTION_PUBLIC), RC_UNUSED);
         } else {
-            BaseGameUtils.makeSimpleDialog(this, getString(R.string.leaderboards_not_available)).show();
+            BaseGameUtils.makeSimpleDialog(this, getString(R.string.no_connection)).show();
         }
     }
 
@@ -364,38 +417,10 @@ public class MainActivity extends FragmentActivity implements
         // Compare and save to local SQLite database
         mazeData.saveLocal(db, finalTime, maze_name);
     }
-
-    /** push to cloud if player has played without signed in and then signs in */
-    public void pushToCloud(){
-        if (!mazeData.isEmpty()) {
-            for(MazeData.Maze maze : mazes){
-                getPlayerHighScoreFromCloud(maze.maze_name);
-                Log.d(TAG, maze.mapTime + " mapTime");
-                if(maze.mapTime > 0 && maze.mapTime < timeInCloud){
-                    Log.d(TAG, "submitted");
-                    Toast.makeText(this, getString(R.string.your_progress_will_be_uploaded), Toast.LENGTH_LONG).show();
-                    Games.Leaderboards.submitScore(mGoogleApiClient, getString(maze.mapId),
-                            mazeData.getMapTime(maze.maze_name));
-                }
-            }
-        }
-    }
-
-    public void getPlayerHighScoreFromCloud(String map_name){
-        int leaderboardId = mazeData.getMapId(map_name);
-        Games.Leaderboards.loadCurrentPlayerLeaderboardScore(mGoogleApiClient, getString(leaderboardId), LeaderboardVariant.TIME_SPAN_ALL_TIME,
-                LeaderboardVariant.COLLECTION_PUBLIC).setResultCallback(new ResultCallback<Leaderboards.LoadPlayerScoreResult>() {
-            public void onResult(Leaderboards.LoadPlayerScoreResult arg0) {
-                if (isPlayerScoreResultValid(arg0)) {
-                    LeaderboardScore lbs = arg0.getScore();
-                    timeInCloud = lbs.getRawScore();
-                    positionInCloud = lbs.getRank();
-
-                    Log.d(TAG, timeInCloud + " score");
-                    //Log.d(TAG, positionInCloud + " displayrank");
-                } else timeInCloud = 99999999;
-            }
-        });
+    @Override
+    public void onUpdateBestTime(String maze_name) {
+        long map_time = mazeData.getMapTime(maze_name);
+        mazeFragment.setMapTime(map_time);
     }
 
     private boolean isPlayerScoreResultValid(final Leaderboards.LoadPlayerScoreResult scoreResult) {
@@ -444,8 +469,6 @@ public class MainActivity extends FragmentActivity implements
             String mapName = highscoreFragment.getName();
             getGlobalHighscores(mazeData.getMapId(mapName));
         }
-        // if we have accomplishments to push, push them
-        //pushToCloud();
     }
 
     @Override

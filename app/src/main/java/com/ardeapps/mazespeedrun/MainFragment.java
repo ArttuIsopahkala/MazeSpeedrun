@@ -47,6 +47,7 @@ public class MainFragment extends Fragment {
     ArrayList<String> maze_difficulties = new ArrayList<>();
     ArrayList<int[][]> maze_maps = new ArrayList<>();
     ArrayList<String> times = new ArrayList<>();
+    ArrayList<Integer> imageIds = new ArrayList<>();
     Context context;
 
     //signing stuff
@@ -80,6 +81,7 @@ public class MainFragment extends Fragment {
         for(MazeData.Maze maze : mazes){
             maze_names.add(maze.maze_name);
             maze_maps.add(maze.map);
+            imageIds.add(maze.imageId);
             switch(maze.difficulty){
                 case 1:
                     maze_difficulties.add(getString(R.string.easy));
@@ -99,12 +101,12 @@ public class MainFragment extends Fragment {
             } else times.add(getString(R.string.default_zero));
         }
 
-        adapter = new MazeAdapter(context, maze_names, maze_difficulties, maze_maps, times);
+        adapter = new MazeAdapter(context, maze_names, maze_difficulties, maze_maps, times, imageIds);
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
+    public void onDestroyView() {
+        super.onDestroyView();
         //empty mazes arraylist
         mazes.clear();
         maze_names.clear();

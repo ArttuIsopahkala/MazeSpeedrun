@@ -3,7 +3,6 @@
     <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
         <item name="android:actionBarStyle">@style/CustomActionBar</item>
         <item name="android:popupMenuStyle">@style/CustomPopUpMenu</item>
-        <item name="android:buttonStyle">@style/Buttons</item>
     </style>
 
     <style name="CustomPopUpMenu" parent="@android:style/Widget.Holo.Light.ListPopupWindow">
@@ -18,10 +17,5 @@
     <style name="CustomActionBar.Title" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
         <item name="android:textColor">@color/color_text_light</item>
         <item name="android:textStyle">bold</item>
-    </style>
-
-    <style name="Buttons" parent="@android:style/Widget.Button">
-        <item name="android:textColor">@color/color_text_light</item>
-        <item name="android:background">@android:drawable/btn_default</item><!-- only way to change this is to change the src image -->
     </style>
 </resources>

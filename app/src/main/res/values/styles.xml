@@ -1,21 +1,21 @@
 <resources>
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="android:Theme.Holo.Light">
-        <item name="android:actionBarStyle">@style/MyActionBar</item>
+    <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
+        <item name="android:actionBarStyle">@style/CustomActionBar</item>
         <item name="android:popupMenuStyle">@style/CustomPopUpMenu</item>
     </style>
 
     <style name="CustomPopUpMenu" parent="@android:style/Widget.Holo.Light.ListPopupWindow">
-        <item name="android:popupBackground">@color/color_secondary</item>
+        <item name="android:popupBackground">@color/color_actionbar</item>
     </style>
 
     <style name="CustomActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">
-        <item name="android:background">@color/color_secondary</item>
-        <item name="android:gravity">center_horizontal</item>
+        <item name="android:titleTextStyle">@style/CustomActionBar.Title</item>
+        <item name="android:background">@color/color_actionbar</item>
     </style>
 
-    <style name="MyActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">
-        <item name="android:background">#FFF3C9</item>
+    <style name="CustomActionBar.Title" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
+        <item name="android:textColor">@color/color_text_light</item>
+        <item name="android:textStyle">bold</item>
     </style>
 </resources>
