@@ -1,26 +1,17 @@
 package com.ardeapps.mazespeedrun;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.common.SignInButton;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -48,14 +39,15 @@ public class MainFragment extends Fragment {
     ArrayList<int[][]> maze_maps = new ArrayList<>();
     ArrayList<String> times = new ArrayList<>();
     ArrayList<Integer> imageIds = new ArrayList<>();
+    ArrayList<Boolean> unLockeds = new ArrayList<>();
     Context context;
 
     //signing stuff
     String mGreeting;
 
     public interface Listener {
-        public void onSignInButtonClicked();
-        public void onSignOutButtonClicked();
+        void onSignInButtonClicked();
+        void onSignOutButtonClicked();
     }
 
     Listener mListener = null;
@@ -82,6 +74,7 @@ public class MainFragment extends Fragment {
             maze_names.add(maze.maze_name);
             maze_maps.add(maze.map);
             imageIds.add(maze.imageId);
+            unLockeds.add(maze.unLocked);
             switch(maze.difficulty){
                 case 1:
                     maze_difficulties.add(getString(R.string.easy));
@@ -101,7 +94,7 @@ public class MainFragment extends Fragment {
             } else times.add(getString(R.string.default_zero));
         }
 
-        adapter = new MazeAdapter(context, maze_names, maze_difficulties, maze_maps, times, imageIds);
+        adapter = new MazeAdapter(context, maze_names, maze_difficulties, maze_maps, times, imageIds, unLockeds);
     }
 
     @Override
@@ -113,6 +106,8 @@ public class MainFragment extends Fragment {
         maze_difficulties.clear();
         maze_maps.clear();
         times.clear();
+        imageIds.clear();
+        unLockeds.clear();
     }
 
     @Override

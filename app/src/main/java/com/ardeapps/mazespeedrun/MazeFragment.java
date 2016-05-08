@@ -69,9 +69,6 @@ public class MazeFragment extends Fragment {
     boolean gameStarted = false;
     Float finalTime = 0.0f;
 
-    MazeData mazeData = new MazeData();
-    ArrayList<MazeData.Maze> mazes = new ArrayList<>();
-
     //timer
     long startTime = 0;
     TextView clockText;
@@ -89,8 +86,8 @@ public class MazeFragment extends Fragment {
     };
 
     public interface Listener {
-        public void onGameFinished(Float time, String maze_name);
-        public void onUpdateBestTime(String maze_name);
+        void onGameFinished(Float time, String maze_name);
+        void onUpdateBestTime(String maze_name);
     }
 
     Listener mListener = null;
@@ -168,7 +165,6 @@ public class MazeFragment extends Fragment {
                         r++;
                     }
                     ImageView floorImage = new ImageView(getActivity());
-                    ImageView wallImage = new ImageView(getActivity());
                     Space wall = new Space(getActivity());
                     wall.setLayoutParams(new FrameLayout.LayoutParams(imageWidth, imageHeight));
                     int imgtype = maze[r][c];
@@ -234,10 +230,6 @@ public class MazeFragment extends Fragment {
                                 }
                                 gameFinishedRight(false);
                                 break;
-                            case 1:
-                                //path
-                                // TODO: 21.3.2016 maybe some path?
-                                break;
                             case 3:
                                 //finish, stop timer
                                 if(gameStarted){
@@ -272,6 +264,7 @@ public class MazeFragment extends Fragment {
         finishImage.setImageBitmap(finish);
         clockText.setText(R.string.default_zero);
     }
+
     public void setMapTime(long requestTime){
         //get time from MazeData for compare and check new highscore
         Float currentTime = (float)requestTime/1000;
@@ -298,7 +291,9 @@ public class MazeFragment extends Fragment {
             }
             gameStarted = false;
             mListener.onUpdateBestTime(name);
+            //Show results in dialog
             DialogFragment resultDialog = CustomResultDialog.newInstance(name, finalTime, time, newBestTime);
+            resultDialog.setCancelable(false);
             resultDialog.show(manager, "resultDialog");
         }
     }

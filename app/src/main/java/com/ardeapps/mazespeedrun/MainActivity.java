@@ -18,6 +18,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.SpannableString;
@@ -55,11 +56,6 @@ public class MainActivity extends FragmentActivity implements
     MazeData mazeData = new MazeData();
     ArrayList<MazeData.Maze> mazes;
 
-    // Create Preference to check if application is going to be called first
-    // time.
-    SharedPreferences appPref;
-    boolean isFirstTime = true;
-
     // Client used to interact with Google APIs
     private GoogleApiClient mGoogleApiClient;
 
@@ -86,8 +82,9 @@ public class MainActivity extends FragmentActivity implements
     /** MENU ITEMS */
     private static final int MENU_ITEM_ID_ABOUT =1;
     private static final int MENU_ITEM_ID_LOGIN =2;
-    private static final int MENU_ITEM_ID_LEADERBOARDS =3;
-    private static final int MENU_ITEM_ID_LOGOUT =4;
+    private static final int MENU_ITEM_ID_ACHIEVEMENTS =3;
+    private static final int MENU_ITEM_ID_LEADERBOARDS =4;
+    private static final int MENU_ITEM_ID_LOGOUT =5;
     private int mMenuSet = 1;
 
     /** DATABASE, MAP AND RESULT VARIABLES */
@@ -232,38 +229,8 @@ public class MainActivity extends FragmentActivity implements
 
         // get database instance
         db = (new Database(this)).getWritableDatabase();
-        //getHighscoresFromCloud();
 
-        // load local times from database and update
         mazeData.loadLocal(db);
-
-        // Get preference value to know that is it first time application is
-        // being called.
-        appPref = getSharedPreferences("isFirstTime", 0);
-        isFirstTime = appPref.getBoolean("isFirstTime", true);
-        if (isFirstTime) {
-            // Create explicit intent which will be used to call Our application
-            // when some one clicked on short cut
-            Intent shortcutIntent = new Intent(getApplicationContext(),
-                    MainActivity.class);
-            shortcutIntent.setAction(Intent.ACTION_MAIN);
-            Intent intent = new Intent();
-
-            // Create Implicit intent and assign Shortcut Application Name, Icon
-            intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
-            intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, R.string.app_name);
-            intent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE,
-                    Intent.ShortcutIconResource.fromContext(
-                            getApplicationContext(), R.mipmap.ic_launcher));
-            intent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
-            getApplicationContext().sendBroadcast(intent);
-
-            // Set preference to inform that we have created shortcut on
-            // Homescreen
-            SharedPreferences.Editor editor = appPref.edit();
-            editor.putBoolean("isFirstTime", false);
-            editor.apply();
-        }
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -273,6 +240,7 @@ public class MainActivity extends FragmentActivity implements
             menu.add(Menu.NONE, MENU_ITEM_ID_ABOUT, Menu.NONE, getString(R.string.action_about)).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
         }else if(mMenuSet==2){
             menu.add(Menu.NONE, MENU_ITEM_ID_ABOUT, Menu.NONE,getString(R.string.action_about)).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+            menu.add(Menu.NONE, MENU_ITEM_ID_ACHIEVEMENTS, Menu.NONE,getString(R.string.action_achievements)).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
             menu.add(Menu.NONE, MENU_ITEM_ID_LEADERBOARDS, Menu.NONE,getString(R.string.action_leaderboards)).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
             menu.add(Menu.NONE, MENU_ITEM_ID_LOGOUT, Menu.NONE, getString(R.string.action_logout)).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
         }
@@ -296,6 +264,14 @@ public class MainActivity extends FragmentActivity implements
                 break;
             case MENU_ITEM_ID_LOGIN:
                 onSignInButtonClicked();
+                break;
+            case MENU_ITEM_ID_ACHIEVEMENTS:
+                if (isSignedIn()) {
+                    startActivityForResult(Games.Achievements.getAchievementsIntent(mGoogleApiClient),
+                            RC_UNUSED);
+                } else {
+                    BaseGameUtils.makeSimpleDialog(this, getString(R.string.achievements_not_available)).show();
+                }
                 break;
             case MENU_ITEM_ID_LEADERBOARDS:
                 if (isSignedIn()) {
@@ -381,6 +357,9 @@ public class MainActivity extends FragmentActivity implements
 
     @Override
     public void onGameFinished(Float requestedTime, final String maze_name) {
+        //update unlocked maps
+        mazeData.loadLocal(db);
+
         // update leaderboards
         this.maze_name = maze_name;
         this.finalTime = requestedTime; //to milliseconds for ex. 1333
@@ -388,31 +367,64 @@ public class MainActivity extends FragmentActivity implements
         final long timeToCloud = (long)(requestedTime*1000);
         final int leaderboardId = mazeData.getMapId(maze_name);
 
-        //if time is first result, or best time
-        if (mazeData.getMapTime(maze_name) == -1 || mazeData.getMapTime(maze_name) > timeToCloud) {
-            mazeData.setNewMapTime(maze_name, timeToCloud);
-        }
-
         if (isSignedIn() && leaderboardId > 0) {
-            Games.Leaderboards.loadCurrentPlayerLeaderboardScore(mGoogleApiClient, getString(leaderboardId), LeaderboardVariant.TIME_SPAN_DAILY,
-                    LeaderboardVariant.COLLECTION_PUBLIC).setResultCallback(new ResultCallback<Leaderboards.LoadPlayerScoreResult>() {
-                public void onResult(Leaderboards.LoadPlayerScoreResult arg0) {
-                    LeaderboardScore lbs = arg0.getScore();
-                    // Submit new highscore to cloud
-                    if(lbs != null){
+            // Check achievements
+            if(timeToCloud < 1000){
+                Games.Achievements.unlock(mGoogleApiClient, getString(R.string.achievement_time_under_1_second));
+            }
+            if(timeToCloud < 500){
+                Games.Achievements.unlock(mGoogleApiClient, getString(R.string.achievement_time_under_05_second));
+            }
+            if(timeToCloud < 300){
+                Games.Achievements.unlock(mGoogleApiClient, getString(R.string.achievement_time_under_03_second));
+            }
+
+            if(mazeData.getUnlockedCount() >= 10){
+                Games.Achievements.unlock(mGoogleApiClient, getString(R.string.achievement_all_easy_mazes_unlocked));
+            }
+            if(mazeData.getUnlockedCount() >= 20){
+                Games.Achievements.unlock(mGoogleApiClient, getString(R.string.achievement_all_medium_mazes_unlocked));
+            }
+            if(mazeData.getUnlockedCount() >= 30){
+                Games.Achievements.unlock(mGoogleApiClient, getString(R.string.achievement_all_mazes_unlocked));
+            }
+            Games.Leaderboards.loadTopScores(mGoogleApiClient, getString(leaderboardId),
+                    LeaderboardVariant.TIME_SPAN_ALL_TIME,
+                    LeaderboardVariant.COLLECTION_PUBLIC, 1).setResultCallback(new ResultCallback<Leaderboards.LoadScoresResult>() {
+                public void onResult(Leaderboards.LoadScoresResult arg0) {
+                    if (isScoreResultValid(arg0)) {
+                        LeaderboardScore lbs = arg0.getScores().get(0);
                         long time = lbs.getRawScore();
-                        if (timeToCloud < time) {
-                            Log.d(TAG, "NEW SCORE TO CLOUD: "+timeToCloud);
-                            Games.Leaderboards.submitScore(mGoogleApiClient, getString(leaderboardId),
-                                    timeToCloud);
+                        if(timeToCloud < time) {
+                            Games.Achievements.unlock(mGoogleApiClient, getString(R.string.achievement_all_time_global_highscore));
                         }
-                    } else {
-                        Log.d(TAG, "first NEW SCORE TO CLOUD: "+timeToCloud);
-                        Games.Leaderboards.submitScore(mGoogleApiClient, getString(leaderboardId),
-                                timeToCloud);
-                    }
+                    } else Games.Achievements.unlock(mGoogleApiClient, getString(R.string.achievement_all_time_global_highscore));
                 }
             });
+            Games.Leaderboards.loadTopScores(mGoogleApiClient, getString(leaderboardId),
+                    LeaderboardVariant.TIME_SPAN_DAILY,
+                    LeaderboardVariant.COLLECTION_PUBLIC, 1).setResultCallback(new ResultCallback<Leaderboards.LoadScoresResult>() {
+
+                public void onResult(Leaderboards.LoadScoresResult arg0) {
+                    if (isScoreResultValid(arg0)) {
+                        LeaderboardScore lbs = arg0.getScores().get(0);
+                        long time = lbs.getRawScore();
+                        if(timeToCloud < time) {
+                            Games.Achievements.increment(mGoogleApiClient, getString(R.string.achievement_5_global_highscores), 1);
+                        }
+                    } else Games.Achievements.increment(mGoogleApiClient, getString(R.string.achievement_5_global_highscores), 1);
+                }
+            });
+            Games.Achievements.increment(mGoogleApiClient, getString(R.string.achievement_100_games_played), 1);
+            Games.Achievements.increment(mGoogleApiClient, getString(R.string.achievement_500_games_played), 1);
+
+            //if time is first result, or best time set local best
+            if (mazeData.getMapTime(maze_name) == -1 || mazeData.getMapTime(maze_name) > timeToCloud) {
+                mazeData.setNewMapTime(maze_name, timeToCloud);
+            }
+
+            // Submit new score to cloud
+            Games.Leaderboards.submitScore(mGoogleApiClient, getString(leaderboardId), timeToCloud);
         }
         // Compare and save to local SQLite database
         mazeData.saveLocal(db, finalTime, maze_name);

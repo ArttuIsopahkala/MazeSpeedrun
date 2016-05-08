@@ -6,6 +6,16 @@ Save this file as res/values/games-ids.xml in your project.
 <resources>
     <string name="app_id" translatable="false">462682182118</string>
     <string name="package_name" translatable="false">com.ardeapps.mazespeedrun</string>
+    <string name="achievement_time_under_1_second">CgkI5qOH0LsNEAIQHw</string>
+    <string name="achievement_time_under_05_second">CgkI5qOH0LsNEAIQJA</string>
+    <string name="achievement_time_under_03_second">CgkI5qOH0LsNEAIQJQ</string>
+    <string name="achievement_all_easy_mazes_unlocked">CgkI5qOH0LsNEAIQIQ</string>
+    <string name="achievement_all_medium_mazes_unlocked">CgkI5qOH0LsNEAIQIg</string>
+    <string name="achievement_all_mazes_unlocked">CgkI5qOH0LsNEAIQIw</string>
+    <string name="achievement_all_time_global_highscore">CgkI5qOH0LsNEAIQIA</string>
+    <string name="achievement_5_global_highscores">CgkI5qOH0LsNEAIQJw</string>
+    <string name="achievement_100_games_played">CgkI5qOH0LsNEAIQJg</string>
+    <string name="achievement_500_games_played">CgkI5qOH0LsNEAIQKA</string>
     <string name="leaderboard_map_1" translatable="false">CgkI5qOH0LsNEAIQAQ</string>
     <string name="leaderboard_map_2" translatable="false">CgkI5qOH0LsNEAIQAg</string>
     <string name="leaderboard_map_3" translatable="false">CgkI5qOH0LsNEAIQAw</string>

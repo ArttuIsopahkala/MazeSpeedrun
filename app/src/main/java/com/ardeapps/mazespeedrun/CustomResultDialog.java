@@ -20,12 +20,13 @@ import android.widget.TextView;
 
 /**
  * Created by Arttu on 21.3.2016.
+ * DialogFragment which appears after finishing maze
  */
 public class CustomResultDialog extends DialogFragment implements
         android.view.View.OnClickListener {
 
     public static final String SWITCH_TO_HIGHSCORE = "com.ardeapps.mazespeedrun.SWITCH_TO_HIGHSCORE";
-    public Button highscores, again;
+    public Button highscores, again, menu;
     public TextView nameText, timeText, bestTimeText;
     String map_name;
     String best_time;
@@ -76,12 +77,12 @@ public class CustomResultDialog extends DialogFragment implements
         nameText = (TextView) v.findViewById(R.id.map_name);
         highscores = (Button) v.findViewById(R.id.btn_highscores);
         again = (Button) v.findViewById(R.id.btn_again);
+        menu = (Button) v.findViewById(R.id.btn_menu);
         highscores.setOnClickListener(this);
         again.setOnClickListener(this);
+        menu.setOnClickListener(this);
 
         nameText.setText(map_name);
-
-        float fBestTime = Float.parseFloat(best_time);
 
         if(time == 0){
             timeText.setText(getString(R.string.not_finish));
@@ -120,6 +121,10 @@ public class CustomResultDialog extends DialogFragment implements
                 dismiss();
                 break;
             case R.id.btn_again:
+                dismiss();
+                break;
+            case R.id.btn_menu:
+                getActivity().getSupportFragmentManager().popBackStack();
                 dismiss();
                 break;
         }

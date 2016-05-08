@@ -9,4 +9,5 @@
     <item name="color_btn_pressed" type="color">#b36b00</item>
     <item name="color_btn" type="color">#955900</item>
     <item name="color_clock" type="color">#A6955900</item>
+    <item name="color_overlay" type="color">#B2000000</item>
 </resources>

@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">Maze Speedrun</string>
     <string name="action_about">Tietoja</string>
-    <string name="action_leaderboards">Huippulistat</string>
+    <string name="action_leaderboards">Tulostaulukot</string>
     <string name="action_login">Kirjaudu sisään</string>
     <string name="action_logout">Kirjaudu ulos</string>
     <string name="again">Uudestaan!</string>
@@ -29,8 +29,10 @@
     <string name="time">Aika</string>
     <string name="info_version">Versio:</string>
     <string name="signin_other_error">Onglma kirjautessa. Kokeile myöhemmin uudelleen.</string>
-    <string name="show_leaderboards">Näytä huippulista</string>
+    <string name="show_leaderboards">Näytä tulostaulukko</string>
     <string name="show_highscores">Näytä parhaat ajat</string>
+    <string name="back_to_menu">Takaisin valikkoon</string>
+    <string name="action_achievements">Saavutukset</string>
     <string name="personal_best_times">Omat parhaat ajat</string>
     <string name="not_finish">Et päässyt maaliin!</string>
     <string name="no_results_yet">Ei vielä tuloksia!</string>
@@ -40,7 +42,8 @@
     <string name="difficulty">Vaikeustaso</string>
     <string name="loading_title">Lataa</string>
     <string name="loading_desc">Etsitään kentän parhaita aikoja..</string>
-    <string name="leaderboards_not_available">Kirjaudu sisään nähdäksesi huippulistat.</string>
+    <string name="leaderboards_not_available">Kirjaudu sisään nähdäksesi tulostaulukot.</string>
+    <string name="achievements_not_available">Kirjaudu sisään nähdäksesi saavutukset.</string>
     <string name="info_usage_title">Pelaaminen</string>
     <string name="info_feedback_content">Kiitos kun pelaat peliämme! Olisimme kiitollisia jos arvostelisit sovelluksen. Voit antaa samalla palautetta sen toimivuudesta ja haluamistasi uusista ominaisuuksista.</string>
     <string name="info_usage_content">Kello käynnistyy kun kosket aloitusruutua. Pidä sormesi alhaalla ja löydä tiesi maaliin koskematta seiniin. Huippulistoilta näet sekä maailmanlaajuiset että kaverisi parhaat ajat. Huom! Tuloksesi tallennetaan huippulistoille vain, jos olet kirjautunut sisään.</string>

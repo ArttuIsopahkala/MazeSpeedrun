@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:background="@drawable/curve_shape"
@@ -16,23 +16,34 @@
         android:textStyle="italic|bold"
         android:id="@+id/map_name"
         android:textColor="@color/color_text"
-        android:textSize="20sp"/>
+        android:textSize="22sp"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="@string/your_time_default"
         android:textColor="@color/color_text"
-        android:textSize="16sp"
+        android:textSize="18sp"
         android:layout_marginBottom="10dp"
         android:id="@+id/time"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
+        android:textSize="16sp"
         android:text="@string/your_best_default"
         android:textColor="@color/color_text"
         android:id="@+id/time_best"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="@string/back_to_menu"
+        android:id="@+id/btn_menu"
+        android:background="@drawable/custom_button"
+        android:textSize="16sp"
+        android:textColor="@color/color_text_light"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -54,7 +65,9 @@
             android:text="@string/again"
             android:id="@+id/btn_again"
             android:background="@drawable/custom_button"
-            android:textSize="16sp"
+            android:textSize="18sp"
+            android:textStyle="bold"
             android:textColor="@color/color_text_light" />
     </LinearLayout>
+
 </LinearLayout>

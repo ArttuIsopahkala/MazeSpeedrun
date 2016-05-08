@@ -12,6 +12,7 @@ import java.util.Locale;
 
 /**
  * Created by Arttu on 24.3.2016.
+ * Class for create personal highscore list
  */
 public class HighscoreAdapter extends ArrayAdapter<Float> {
     ArrayList<Float> times;
@@ -26,13 +27,11 @@ public class HighscoreAdapter extends ArrayAdapter<Float> {
 
     @Override
     public int getCount() {
-        // TODO Auto-generated method stub
         return times.size();
     }
 
     @Override
     public long getItemId(int position) {
-        // TODO Auto-generated method stub
         return position;
     }
     public class ViewHolder {
