@@ -23,8 +23,8 @@
     <string name="info_title_content">Find your way to the goal as fast as you can without hitting walls. Beat records and reach your way to the top lists!</string>
     <string name="info_usage_content">Timer starts when you touch start tile. Hold your finger down and find your way to the finish line without touching walls. In leaderboards you can see worldwide best times and your friends\' times. Attention! Your time will be saved to leaderboards only if you are signed in.</string>
     <string name="no_results_yet">No results yet!</string>
-    <string name="hs_global_title">Global high scores</string>
-    <string name="hs_global_title_default">Sign in to see global high scores!</string>
+    <string name="hs_global_title">Global best times</string>
+    <string name="hs_global_title_default">Sign in to see global best times!</string>
     <string name="hs_your_best">Your best</string>
     <string name="hs_position">Position</string>
     <string name="hs_global_best">Global best</string>
@@ -36,10 +36,10 @@
     <string name="difficulty">Difficulty</string>
     <string name="back_to_menu">Back to menu</string>
     <string name="not_finish">Your did not get to the finish line!</string>
-    <string name="new_highscore">You made the new personal high score!</string>
+    <string name="new_highscore">You made the new personal best time!</string>
 
     <string name="loading_title">Loading</string>
-    <string name="loading_desc">Looking for global high scores..</string>
+    <string name="loading_desc">Looking for global best times..</string>
     <string name="map_title_default" translatable="false">Map</string>
     <string name="your_time_default">Your time was: ???</string>
     <string name="your_best_default">Your best time: ???</string>
@@ -49,7 +49,7 @@
     <string name="no_connection">No internet connection</string>
     <string name="leaderboards_not_available">Please sign in to view leaderboards.</string>
     <string name="achievements_not_available">Please sign in to view Achievements.</string>
-    <string name="show_highscores">Show high scores</string>
+    <string name="show_highscores">Show best times</string>
     <string name="again">Again!</string>
     <string name="banner_ad_unit_id" translatable="false">ca-app-pub-3940256099942544/6300978111</string>
 
