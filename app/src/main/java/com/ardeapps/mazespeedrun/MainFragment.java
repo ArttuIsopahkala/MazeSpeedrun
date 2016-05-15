@@ -45,13 +45,6 @@ public class MainFragment extends Fragment {
     //signing stuff
     String mGreeting;
 
-    public interface Listener {
-        void onSignInButtonClicked();
-        void onSignOutButtonClicked();
-    }
-
-    Listener mListener = null;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -116,6 +109,7 @@ public class MainFragment extends Fragment {
         updateMazeData();
 
         View v = inflater.inflate(R.layout.fragment_main, container, false);
+
         AdView mAdView = (AdView) v.findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
@@ -123,10 +117,6 @@ public class MainFragment extends Fragment {
         listView = (ListView) v.findViewById(R.id.listView);
         listView.setAdapter(adapter);
         return v;
-    }
-
-    public void setListener(Listener l) {
-        mListener = l;
     }
 
     @Override

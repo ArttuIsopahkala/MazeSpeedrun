@@ -29,6 +29,10 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -44,7 +48,7 @@ import com.google.android.gms.games.leaderboard.Leaderboards;
 import java.util.ArrayList;
 
 public class MainActivity extends FragmentActivity implements
-        MainFragment.Listener, HighscoreFragment.Listener, MazeFragment.Listener,
+        HighscoreFragment.Listener, MazeFragment.Listener,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
         DialogInterface.OnDismissListener {
 
@@ -69,12 +73,10 @@ public class MainActivity extends FragmentActivity implements
     private boolean mAutoStartSignInFlow = true;
 
     // request codes we use when invoking an external activity
-    private static final int RC_RESOLVE = 5000;
     private static final int RC_UNUSED = 5001;
     private static final int RC_SIGN_IN = 9001;
 
     // tag for debug logging
-    final boolean ENABLE_DEBUG = true;
     final String TAG = "TanC";
 
     // create intent filter for mainFragment, switching highscores or start gameplay
@@ -215,7 +217,6 @@ public class MainActivity extends FragmentActivity implements
         mainFragment = new MainFragment();
         highscoreFragment = new HighscoreFragment();
         mazeFragment = new MazeFragment();
-        mainFragment.setListener(this);
         highscoreFragment.setListener(this);
         mazeFragment.setListener(this);
 
@@ -232,6 +233,7 @@ public class MainActivity extends FragmentActivity implements
 
         mazeData.loadLocal(db);
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);

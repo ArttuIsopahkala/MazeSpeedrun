@@ -28,7 +28,7 @@
     <string name="your_best">Paras aikasi on</string>
     <string name="time">Aika</string>
     <string name="info_version">Versio:</string>
-    <string name="signin_other_error">Onglma kirjautessa. Kokeile myöhemmin uudelleen.</string>
+    <string name="signin_other_error">Ei kirjauduttu. Kokeile myöhemmin uudelleen.</string>
     <string name="show_leaderboards">Näytä tulostaulukko</string>
     <string name="show_highscores">Näytä parhaat ajat</string>
     <string name="back_to_menu">Takaisin valikkoon</string>

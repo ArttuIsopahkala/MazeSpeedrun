@@ -205,7 +205,7 @@ public class MazeFragment extends Fragment {
                         //start timer only if finger touches start tile
                         initialX = event.getRawX();
                         initialY = event.getRawY();
-                        if(whatViewIsIt(initialX, initialY) == 2){
+                        if(whichViewIsIt(initialX, initialY) == 2){
                             //start timer
                             startTime = System.currentTimeMillis();
                             timerHandler.postDelayed(timerRunnable, 0);
@@ -217,7 +217,7 @@ public class MazeFragment extends Fragment {
                         break;
 
                     case MotionEvent.ACTION_MOVE:
-                        switch (whatViewIsIt(event.getRawX(), event.getRawY())){
+                        switch (whichViewIsIt(event.getRawX(), event.getRawY())){
                             case 0:
                                 //wall
                                 if(!targetVisible && gameStarted){
@@ -298,7 +298,7 @@ public class MazeFragment extends Fragment {
         }
     }
 
-    public int whatViewIsIt(float x, float y) {
+    public int whichViewIsIt(float x, float y) {
         for (int i = 0, c = 0, r = 0; i < xTilesCount * yTilesCount; i++, c++) {
             if (c == xTilesCount) {
                 c = 0;

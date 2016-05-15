@@ -32,7 +32,7 @@ public class InfoFragment extends Fragment {
         versionTextView.setText(versionTextView.getText().toString()+" "+BuildConfig.VERSION_NAME);
         rateTextView.setText(
                 Html.fromHtml(
-                        "<a href=\"http://play.google.com/store/apps/details?id=com.ardeapps.sarjakuvalukija\">" + getText(R.string.info_link_rate) + "</a> "));
+                        "<a href=\"http://play.google.com/store/apps/details?id=com.ardeapps.mazespeedrun\">" + getText(R.string.info_link_rate) + "</a> "));
         rateTextView.setMovementMethod(LinkMovementMethod.getInstance());
 
         moreTextView.setText(

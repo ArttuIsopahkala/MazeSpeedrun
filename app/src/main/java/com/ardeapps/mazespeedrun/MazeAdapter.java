@@ -12,6 +12,10 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
+
 import java.util.ArrayList;
 
 /**
@@ -73,6 +77,7 @@ public class MazeAdapter extends BaseAdapter{
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.list_item, null);
         }
+
         holder.lock_overlay = (RelativeLayout) convertView.findViewById(R.id.lock_overlay);
 
         holder.title_tv = (TextView) convertView.findViewById(R.id.maze_name);
@@ -102,7 +107,6 @@ public class MazeAdapter extends BaseAdapter{
                     Intent hsIntent = new Intent(SWITCH_TO_MAZE);
                     hsIntent.putExtras(mBundle);
                     context.sendBroadcast(hsIntent);
-
                 }
             });
             holder.stats_btn.setOnClickListener(new View.OnClickListener() {
@@ -120,5 +124,4 @@ public class MazeAdapter extends BaseAdapter{
 
         return convertView;
     }
-
 }

@@ -18,6 +18,10 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
+
 /**
  * Created by Arttu on 21.3.2016.
  * DialogFragment which appears after finishing maze
@@ -32,11 +36,9 @@ public class CustomResultDialog extends DialogFragment implements
     String best_time;
     Float time;
     boolean isNewHighscore;
+    // Ads
+    InterstitialAd mInterstitialAd;
 
-    /**
-     * Create a new instance of MyDialogFragment, providing "num"
-     * as an argument.
-     */
     static CustomResultDialog newInstance(String name, Float finalTime, String bestTime, boolean newBest) {
         CustomResultDialog f = new CustomResultDialog();
 
@@ -61,6 +63,18 @@ public class CustomResultDialog extends DialogFragment implements
         time = getArguments().getFloat("time", 0.00f);
         best_time = getArguments().getString("best_time", "-");
         isNewHighscore = getArguments().getBoolean("new_best", false);
+        // Load ads
+        mInterstitialAd = new InterstitialAd(getActivity());
+        mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
+
+        mInterstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdClosed() {
+                requestNewInterstitial();
+
+            }
+        });
+        requestNewInterstitial();
     }
 
     @Nullable
@@ -88,8 +102,8 @@ public class CustomResultDialog extends DialogFragment implements
             timeText.setText(getString(R.string.not_finish));
         }else timeText.setText(getString(R.string.your_time)+ ": " + time + "s");
 
-        Log.d("resultdialog", "best_time: "+best_time);
-        Log.d("resultdialog", "new highscrore: "+isNewHighscore);
+        Log.d("resultdialog", "best_time: " + best_time);
+        Log.d("resultdialog", "new highscrore: " + isNewHighscore);
         if(best_time.contains("0.00")){
             bestTimeText.setText(getString(R.string.your_best)+": -");
         }else if(isNewHighscore){
@@ -126,7 +140,18 @@ public class CustomResultDialog extends DialogFragment implements
             case R.id.btn_menu:
                 getActivity().getSupportFragmentManager().popBackStack();
                 dismiss();
+                if (mInterstitialAd.isLoaded()) {
+                    mInterstitialAd.show();
+                }
                 break;
         }
+    }
+
+    private void requestNewInterstitial() {
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice("9C719002557124CD0CCB65412A2C3EE1")
+                .build();
+
+        mInterstitialAd.loadAd(adRequest);
     }
 }
